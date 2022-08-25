@@ -27,10 +27,6 @@ public class Email {
     @Enumerated(EnumType.STRING)
     private EmailType emailType;
 
-    @ManyToOne
-    @JoinColumn(name="employeeId")
-    private Employee employee;
-
     public Email(String emailAddress, EmailType emailType) {
         this.emailAddress = emailAddress;
         this.emailType = emailType;
@@ -61,15 +57,6 @@ public class Email {
 
     public void setEmailType(EmailType emailType) {
         this.emailType = emailType;
-    }
-
-    @JsonIgnore
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
     }
 
     public static EmailDTO from(Email email){

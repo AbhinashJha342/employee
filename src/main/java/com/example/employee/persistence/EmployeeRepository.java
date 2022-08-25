@@ -20,9 +20,9 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     List<Employee> getEmployeeByEmployeeIdIn(List<UUID> employeeIds);
 
-    List<Employee> findAll();
+    List<Employee> findAllByDeletedIsFalse();
 
-    Employee findEmployeesByEmployeeId(UUID employeeId);
+    Employee findEmployeesByEmployeeIdAndDeletedIsFalse(UUID employeeId);
 
 //    @Query(value = "With filtered_employee_id( select * from address where state = :state ), Select * from employee where id in :filtered_employee_id")
 //    int countByAddressState(String state);

@@ -1,7 +1,7 @@
 package com.example.employee.service;
 
 import com.example.employee.domain.Employee;
-import com.example.employee.web.schema.EmployeeDetailsDTO;
+import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface EmployeeService {
 
-    EmployeeDetailsDTO createEmployee(Employee employee);
+    EmployeeDetailsResponseDTO createEmployee(Employee employee);
 
     List<Employee> findByState(State state);
 
@@ -22,4 +22,6 @@ public interface EmployeeService {
     List<Employee> findAll();
 
     Employee getEmployee(UUID employeeId);
+
+    void archieveEmployee(UUID employeeId);
 }

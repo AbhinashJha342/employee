@@ -1,30 +1,19 @@
 package com.example.employee.web.schema;
 
-import com.example.employee.domain.Address;
-import com.example.employee.domain.Email;
-import com.example.employee.domain.Employee;
-import org.springframework.util.CollectionUtils;
-
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-public class EmployeeDetailsDTO {
+public class EmployeeDetailsResponseDTO {
 
-    @NotNull(message = "employeeID cannot be null.")
     private final UUID employeeId;
 
-    @NotNull(message = "name cannot be null.")
     private final NameDTO names;
 
     private final String gender;
 
     private final List<EmailDTO> email;
 
-    @NotNull(message = "address cannot be null.")
     private final AddressDTO address;
 
     private final String phone;
@@ -35,16 +24,20 @@ public class EmployeeDetailsDTO {
 
     private final String salary;
 
-    private EmployeeDetailsDTO(UUID employeeId, NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, String designation, String salary) {
+    public EmployeeDetailsResponseDTO(UUID employeeId, NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, String designation, String salary) {
         this.employeeId = employeeId;
         this.names = names;
         this.gender = gender;
-        this.email = CollectionUtils.isEmpty(email) ? new ArrayList<>() : email;
+        this.email = email;
         this.address = address;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
         this.designation = designation;
         this.salary = salary;
+    }
+
+    public UUID getEmployeeId() {
+        return employeeId;
     }
 
     public NameDTO getNames() {
@@ -71,14 +64,6 @@ public class EmployeeDetailsDTO {
         return dateOfBirth;
     }
 
-    public UUID getEmployeeId() {
-        return employeeId;
-    }
-
-    public static Builder builder(){
-        return new Builder();
-    }
-
     public String getDesignation() {
         return designation;
     }
@@ -87,20 +72,8 @@ public class EmployeeDetailsDTO {
         return salary;
     }
 
-    public static Employee to(EmployeeDetailsDTO employeeDetailsDTO){
-        List<Email> emailList = Collections.emptyList();
-        if(!employeeDetailsDTO.getEmail().isEmpty()){
-            emailList = employeeDetailsDTO.getEmail().stream().map(EmailDTO::to).collect(Collectors.toList());
-        }
-
-        Address address = AddressDTO.to(employeeDetailsDTO.getAddress());
-
-        Employee emp = new Employee(employeeDetailsDTO.getEmployeeId(), employeeDetailsDTO.getPhone(), employeeDetailsDTO.getGender(),
-                address, NameDTO.to(employeeDetailsDTO.getNames()), emailList, employeeDetailsDTO.dateOfBirth, false,
-                employeeDetailsDTO.getDesignation(), employeeDetailsDTO.getSalary()!=null ? "MXN $"+employeeDetailsDTO.getSalary() : employeeDetailsDTO.getSalary());
-        emp.getEmail().forEach(email1 -> email1.setEmployee(emp));
-        emp.getAddress().setEmployee(emp);
-        return emp;
+    public static Builder builder(){
+        return new Builder();
     }
 
     public static class Builder {
@@ -168,8 +141,8 @@ public class EmployeeDetailsDTO {
             return this;
         }
 
-        public EmployeeDetailsDTO build(){
-            return new EmployeeDetailsDTO(this.employeeId, this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth, this.designation, this.salary);
+        public EmployeeDetailsResponseDTO build(){
+            return new EmployeeDetailsResponseDTO(this.employeeId, this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth, this.designation, this.salary);
         }
     }
 }

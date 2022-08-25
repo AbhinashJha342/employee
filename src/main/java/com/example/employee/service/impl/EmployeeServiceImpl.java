@@ -5,7 +5,7 @@ import com.example.employee.domain.Employee;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
-import com.example.employee.web.schema.EmployeeDetailsDTO;
+import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -38,7 +38,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDetailsDTO createEmployee(Employee employee) {
+    public EmployeeDetailsResponseDTO createEmployee(Employee employee) {
        return Employee.from(employeeRepository.save(employee));
     }
 
@@ -74,10 +74,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         existingEmployee.getEmail().clear();
         existingEmployee.getEmail().addAll(employee.getEmail());
 
-        existingEmployee.getEmail().forEach(email -> email.setEmployee(existingEmployee));
+        //existingEmployee.getEmail().forEach(email -> email.setEmployee(existingEmployee));
         existingEmployee.getAddress().setEmployee(existingEmployee);
 
-        Employee updatedEmployee = employeeRepository.save(employee);
+        Employee updatedEmployee = employeeRepository.save(existingEmployee);
         Change updatedData = new Change(updatedEmployee.getDesignation(), updatedEmployee.getSalary());
         Map<String, Object> finalChangeMap = new HashMap<>();
         try {
@@ -100,12 +100,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> findAll() {
-        return employeeRepository.findAll();
+        return employeeRepository.findAllByDeletedIsFalse();
     }
 
     @Override
     public Employee getEmployee(UUID employeeId) {
-        return employeeRepository.findEmployeesByEmployeeId(employeeId);
+        return employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeId);
+    }
+
+    @Override
+    public void archieveEmployee(UUID employeeId) {
+        Employee employee = getEmployee(employeeId);
+        employee.setDeleted(true);
+        employeeRepository.save(employee);
     }
 
 }

@@ -34,8 +34,7 @@ public class EmployeeDetailsPatchRequestDTO {
 
 
     public static Employee to(UUID employeeId, EmployeeDetailsPatchRequestDTO employeeDetailsPatchRequestDTO){
-        return new Employee(employeeId,
-                Optional.ofNullable(employeeDetailsPatchRequestDTO.getPhone()).isPresent() ? employeeDetailsPatchRequestDTO.getPhone().get() : "",
+        return new Employee(employeeId, Optional.ofNullable(employeeDetailsPatchRequestDTO.getPhone()).isPresent() ? employeeDetailsPatchRequestDTO.getPhone().get() : "",
                 Optional.ofNullable(employeeDetailsPatchRequestDTO.getGender()).isPresent() ? employeeDetailsPatchRequestDTO.getGender().get() : "",
                 AddressDTO.to(employeeDetailsPatchRequestDTO.getAddress()),
                 NameDTO.to(employeeDetailsPatchRequestDTO.getNames()),

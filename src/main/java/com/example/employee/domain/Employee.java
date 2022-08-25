@@ -1,20 +1,19 @@
 package com.example.employee.domain;
 
-import com.example.employee.web.schema.EmployeeDetailsDTO;
-import org.hibernate.annotations.Fetch;
+import com.example.employee.web.schema.EmployeeDetailsRequestDTO;
+import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,7 +28,8 @@ public class Employee {
     private String phone;
     private String gender;
 
-    @OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "employee", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true)
+    @JoinColumn(name="email_id")
     private Collection<Email> email;
 
     @OneToOne(cascade = {CascadeType.PERSIST}, mappedBy = "employee", orphanRemoval = true)
@@ -40,13 +40,13 @@ public class Employee {
 
     private String dateOfBirth;
 
-    private boolean isDeleted;
+    private boolean deleted;
 
     private String designation;
 
     private String salary;
 
-    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean isDeleted, String designation, String salary) {
+    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean deleted, String designation, String salary) {
         this.employeeId = employeeId;
         this.phone = phone;
         this.gender = gender;
@@ -54,7 +54,7 @@ public class Employee {
         this.address = address;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
-        this.isDeleted = isDeleted;
+        this.deleted = deleted;
         this.designation = designation;
         this.salary = salary;
     }
@@ -119,11 +119,11 @@ public class Employee {
     }
 
     public boolean isDeleted() {
-        return isDeleted;
+        return deleted;
     }
 
     public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+        this.deleted = deleted;
     }
 
     public UUID getEmployeeId() {
@@ -150,8 +150,8 @@ public class Employee {
         this.salary = salary;
     }
 
-    public static EmployeeDetailsDTO from(Employee employee){
-        return EmployeeDetailsDTO.builder().setEmployeeId(employee.getEmployeeId())
+    public static EmployeeDetailsResponseDTO from(Employee employee){
+        return EmployeeDetailsResponseDTO.builder().setEmployeeId(employee.getEmployeeId())
                 .setNames(Name.from(employee.getName()))
                 .setGender(employee.getGender()).setDateOfBirth(employee.getDateOfBirth()).setPhoneNumber(employee.getPhone())
                 .setAddress(Address.from(employee.getAddress()))
