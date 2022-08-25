@@ -2,9 +2,11 @@ package com.example.employee.service.impl;
 
 import com.example.employee.domain.Change;
 import com.example.employee.domain.Employee;
+import com.example.employee.domain.EmployeeHistory;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
+import com.example.employee.service.HistoryService;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,17 +26,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    private final ObjectMapper objectMapper;
-
-    private final TypeReference<HashMap<String, Object>> typeReference;
+    private final HistoryService historyService;
 
     //private final EmployeeHistoryRepository historyRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, ObjectMapper objectMapper,TypeReference typeReference){
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, HistoryService historyService){
         this.employeeRepository = employeeRepository;
-        this.objectMapper = objectMapper;
-        this.typeReference = typeReference;
-        //this.historyRepository = historyRepository;
+        this.historyService = historyService;
     }
 
     @Override
@@ -54,15 +52,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee updateEmployee(Employee employee) {
-        String message = "";
-        String finalChange = "";
         Employee existingEmployee = getEmployee(employee.getEmployeeId());
         if(ObjectUtils.isEmpty(existingEmployee)) {
             throw new NotFoundException("Employee not found but trying to update it - employeeId: " + employee.getEmployeeId());
         }
         Change existingData = new Change(existingEmployee.getDesignation(), existingEmployee.getSalary());
-        employee.setId(existingEmployee.getId());
         existingEmployee.setEmployeeId(employee.getEmployeeId());
+
+        if(existingEmployee.equals(employee)){
+            return employee;
+        }
+
         existingEmployee.setAddress(employee.getAddress());
         existingEmployee.setDateOfBirth(employee.getDateOfBirth());
         existingEmployee.setDesignation(employee.getDesignation());
@@ -79,16 +79,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
         Change updatedData = new Change(updatedEmployee.getDesignation(), updatedEmployee.getSalary());
-        Map<String, Object> finalChangeMap = new HashMap<>();
-        try {
-            finalChangeMap.put("new", Change.jsonTransformation(objectMapper, typeReference, updatedData));
-            finalChangeMap.put("old", Change.jsonTransformation(objectMapper, typeReference, existingData));
-            finalChange = objectMapper.writeValueAsString(finalChangeMap);
-        } catch (JsonProcessingException jsonProcessingException){
-            message = jsonProcessingException.getMessage();
-        }
-
-        //addEmployeeHistory(finalChangeMap);
+        historyService.saveEmployeeHistory(existingData, updatedData);
 
         return updatedEmployee;
     }

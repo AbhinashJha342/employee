@@ -9,14 +9,16 @@ import java.util.Map;
 
 public class Change {
 
-    private final String designation;
+    private String designation;
 
-    private final String salary;
+    private String salary;
 
     public Change(String designation, String salary) {
         this.designation = designation;
         this.salary = salary;
     }
+
+    public Change() {}
 
     public String getDesignation() {
         return designation;

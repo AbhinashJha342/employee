@@ -1,8 +1,8 @@
 package com.example.employee.service;
 
-import com.example.employee.domain.EmployeeHistory;
+import com.example.employee.domain.Change;
 
 public interface HistoryService {
 
-    void saveEmployeeHistory(EmployeeHistory employeeHistory);
+    void saveEmployeeHistory(Change old, Change update);
 }

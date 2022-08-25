@@ -1,6 +1,5 @@
 package com.example.employee.domain;
 
-import com.example.employee.web.schema.EmployeeDetailsRequestDTO;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import org.springframework.util.CollectionUtils;
 
@@ -15,6 +14,7 @@ import javax.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -159,5 +159,18 @@ public class Employee {
                 .setDesignation(employee.getDesignation())
                 .setSalary(employee.getSalary())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return deleted == employee.deleted && Objects.equals(id, employee.id) && Objects.equals(employeeId, employee.employeeId) && Objects.equals(phone, employee.phone) && Objects.equals(gender, employee.gender) && Objects.equals(email, employee.email) && Objects.equals(address, employee.address) && Objects.equals(name, employee.name) && Objects.equals(dateOfBirth, employee.dateOfBirth) && Objects.equals(designation, employee.designation) && Objects.equals(salary, employee.salary);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, employeeId, phone, gender, email, address, name, dateOfBirth, deleted, designation, salary);
     }
 }

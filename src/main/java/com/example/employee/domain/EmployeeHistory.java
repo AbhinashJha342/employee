@@ -3,6 +3,8 @@ package com.example.employee.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
 
@@ -10,6 +12,7 @@ import java.time.ZonedDateTime;
 public class EmployeeHistory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonProperty("old")
@@ -32,8 +35,20 @@ public class EmployeeHistory {
         return before;
     }
 
+    public void setBefore(String before) {
+        this.before = before;
+    }
+
     public String getAfter() {
         return after;
+    }
+
+    public void setAfter(String after) {
+        this.after = after;
+    }
+
+    public void setTimeStamp(ZonedDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public ZonedDateTime getTimeStamp() {
