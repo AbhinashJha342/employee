@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class HistoryServiceImpl implements HistoryService {
@@ -29,7 +30,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void saveEmployeeHistory(Change old, Change update) {
+    public void saveEmployeeHistory(UUID employeeID, Change old, Change update) {
         Map<String, Object> finalChangeMap = new HashMap<>();
         String oldData = null;
         String newData = null;
@@ -40,6 +41,11 @@ public class HistoryServiceImpl implements HistoryService {
 
         }
 
-        employeeHistoryRepository.save(new EmployeeHistory(oldData, newData, ZonedDateTime.now()));
+        employeeHistoryRepository.save(new EmployeeHistory(oldData, newData, ZonedDateTime.now(), employeeID));
+    }
+
+    @Override
+    public EmployeeHistory getEmployeeHistory(UUID employeeId) {
+        return employeeHistoryRepository.getEmployeeByEmployeeID(employeeId);
     }
 }

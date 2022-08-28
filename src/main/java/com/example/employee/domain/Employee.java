@@ -1,10 +1,13 @@
 package com.example.employee.domain;
 
+import com.example.employee.web.schema.DesignationType;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -42,11 +45,12 @@ public class Employee {
 
     private boolean deleted;
 
-    private String designation;
+    @Enumerated(EnumType.STRING)
+    private DesignationType designation;
 
     private String salary;
 
-    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean deleted, String designation, String salary) {
+    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean deleted, DesignationType designation, String salary) {
         this.employeeId = employeeId;
         this.phone = phone;
         this.gender = gender;
@@ -134,11 +138,11 @@ public class Employee {
         this.employeeId = employeeId;
     }
 
-    public String getDesignation() {
+    public DesignationType getDesignation() {
         return designation;
     }
 
-    public void setDesignation(String designation) {
+    public void setDesignation(DesignationType designation) {
         this.designation = designation;
     }
 
@@ -156,7 +160,7 @@ public class Employee {
                 .setGender(employee.getGender()).setDateOfBirth(employee.getDateOfBirth()).setPhoneNumber(employee.getPhone())
                 .setAddress(Address.from(employee.getAddress()))
                 .setEmailDTO(employee.getEmail().stream().map(Email::from).collect(Collectors.toList()))
-                .setDesignation(employee.getDesignation())
+                .setDesignation(employee.getDesignation().toString())
                 .setSalary(employee.getSalary())
                 .build();
     }

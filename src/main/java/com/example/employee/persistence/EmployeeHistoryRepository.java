@@ -1,10 +1,13 @@
 package com.example.employee.persistence;
 
-import com.example.employee.domain.Employee;
 import com.example.employee.domain.EmployeeHistory;
 import org.springframework.data.repository.CrudRepository;
 
-public interface EmployeeHistoryRepository extends CrudRepository<Employee, Long> {
+import java.util.UUID;
+
+public interface EmployeeHistoryRepository extends CrudRepository<EmployeeHistory, Long> {
 
     EmployeeHistory save(EmployeeHistory employeeHistory);
+
+    EmployeeHistory getEmployeeByEmployeeID(UUID employeeID);
 }

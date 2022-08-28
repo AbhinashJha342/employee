@@ -1,10 +1,13 @@
 package com.example.employee.web;
 
 import com.example.employee.domain.Employee;
+import com.example.employee.domain.EmployeeHistory;
 import com.example.employee.service.EmployeeService;
+import com.example.employee.service.HistoryService;
 import com.example.employee.web.schema.EmployeeDetailsRequestDTO;
 import com.example.employee.web.schema.EmployeeDetailsPatchRequestDTO;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
+import com.example.employee.web.schema.EmployeeHistoryResponseDto;
 import com.example.employee.web.schema.State;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +35,9 @@ public class EmployeeAdminController {
 
     @Autowired
     private EmployeeService employeeService;
+
+    @Autowired
+    private HistoryService employeeHistory;
 
     @DeleteMapping(headers = "Employee-id")
     public ResponseEntity archieve(@RequestHeader("Employee-id") UUID employeeId){
@@ -85,6 +91,11 @@ public class EmployeeAdminController {
         return !ObjectUtils.isEmpty(employee) ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT):
                 new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<EmployeeHistoryResponseDto> getEmployeeHistory(@RequestHeader("Employee-id") UUID employeeId){
+       return new ResponseEntity(EmployeeHistory.from(employeeHistory.getEmployeeHistory(employeeId)), HttpStatus.OK);
     }
 
     private List<Employee> getEmployees(List<UUID> employeeIds){

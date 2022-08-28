@@ -1,5 +1,6 @@
 package com.example.employee.domain;
 
+import com.example.employee.web.schema.EmployeeHistoryResponseDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Entity;
@@ -7,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Entity
 public class EmployeeHistory {
@@ -16,20 +18,24 @@ public class EmployeeHistory {
     private Long id;
 
     @JsonProperty("old")
-    public String before;
+    private String before;
 
     @JsonProperty("new")
-    public String after;
+    private String after;
 
     public ZonedDateTime timeStamp;
 
-    public EmployeeHistory(String before, String after, ZonedDateTime timeStamp) {
+    private UUID employeeID;
+
+    public EmployeeHistory(String before, String after, ZonedDateTime timeStamp, UUID employeeID) {
         this.before = before;
         this.after = after;
         this.timeStamp = timeStamp;
+        this.employeeID = employeeID;
     }
 
-    public EmployeeHistory(){}
+    public EmployeeHistory(){
+    }
 
     public String getBefore() {
         return before;
@@ -59,8 +65,20 @@ public class EmployeeHistory {
         this.id = id;
     }
 
-
     public Long getId() {
         return id;
+    }
+
+    public UUID getEmployeeID() {
+        return employeeID;
+    }
+
+    public void setEmployeeID(UUID employeeID) {
+        this.employeeID = employeeID;
+    }
+
+    public static EmployeeHistoryResponseDto from(EmployeeHistory employeeHistory){
+        return new EmployeeHistoryResponseDto(employeeHistory.getEmployeeID(), employeeHistory.getBefore(),
+                employeeHistory.getAfter(), employeeHistory.getTimeStamp());
     }
 }

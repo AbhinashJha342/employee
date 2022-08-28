@@ -56,7 +56,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(ObjectUtils.isEmpty(existingEmployee)) {
             throw new NotFoundException("Employee not found but trying to update it - employeeId: " + employee.getEmployeeId());
         }
-        Change existingData = new Change(existingEmployee.getDesignation(), existingEmployee.getSalary());
+        Change existingData = new Change(existingEmployee.getDesignation().toString(), existingEmployee.getSalary());
         existingEmployee.setEmployeeId(employee.getEmployeeId());
 
         if(existingEmployee.equals(employee)){
@@ -78,8 +78,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         existingEmployee.getAddress().setEmployee(existingEmployee);
 
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
-        Change updatedData = new Change(updatedEmployee.getDesignation(), updatedEmployee.getSalary());
-        historyService.saveEmployeeHistory(existingData, updatedData);
+        Change updatedData = new Change(updatedEmployee.getDesignation().toString(), updatedEmployee.getSalary());
+        historyService.saveEmployeeHistory(existingEmployee.getEmployeeId(), existingData, updatedData);
 
         return updatedEmployee;
     }

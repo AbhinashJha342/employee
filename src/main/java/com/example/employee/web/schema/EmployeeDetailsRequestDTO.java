@@ -28,11 +28,11 @@ public class EmployeeDetailsRequestDTO {
 
     private final String dateOfBirth;
 
-    private final String designation;
+    private final DesignationType designation;
 
     private final String salary;
 
-    private EmployeeDetailsRequestDTO(NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, String designation, String salary) {
+    private EmployeeDetailsRequestDTO(NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, DesignationType designation, String salary) {
         this.names = names;
         this.gender = gender;
         this.email = CollectionUtils.isEmpty(email) ? new ArrayList<>() : email;
@@ -71,7 +71,7 @@ public class EmployeeDetailsRequestDTO {
         return new Builder();
     }
 
-    public String getDesignation() {
+    public DesignationType getDesignation() {
         return designation;
     }
 
@@ -89,7 +89,7 @@ public class EmployeeDetailsRequestDTO {
 
         Employee emp = new Employee(employeeId, employeeDetailsRequestDTO.getPhone(), employeeDetailsRequestDTO.getGender(),
                 address, NameDTO.to(employeeDetailsRequestDTO.getNames()), emailList, employeeDetailsRequestDTO.dateOfBirth, false,
-                employeeDetailsRequestDTO.getDesignation(), employeeDetailsRequestDTO.getSalary()!=null ? "MXN $"+ employeeDetailsRequestDTO.getSalary() : employeeDetailsRequestDTO.getSalary());
+                employeeDetailsRequestDTO.getDesignation()!=null ? employeeDetailsRequestDTO.getDesignation() : DesignationType.TRAINEE, employeeDetailsRequestDTO.getSalary()!=null ? "MXN $"+ employeeDetailsRequestDTO.getSalary() : employeeDetailsRequestDTO.getSalary());
         //emp.getEmail().forEach(email1 -> email1.setEmployee(emp));
         emp.getAddress().setEmployee(emp);
         return emp;
@@ -111,7 +111,7 @@ public class EmployeeDetailsRequestDTO {
 
         private String dateOfBirth;
 
-        private String designation;
+        private DesignationType designation;
 
         private String salary;
 
@@ -150,7 +150,7 @@ public class EmployeeDetailsRequestDTO {
             return this;
         }
 
-        public Builder setDesignation(String designation) {
+        public Builder setDesignation(DesignationType designation) {
             this.designation = designation;
             return this;
         }
