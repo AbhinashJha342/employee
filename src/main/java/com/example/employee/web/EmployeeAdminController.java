@@ -2,6 +2,7 @@ package com.example.employee.web;
 
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.EmployeeHistory;
+import com.example.employee.domain.NameFilter;
 import com.example.employee.service.EmployeeService;
 import com.example.employee.service.HistoryService;
 import com.example.employee.web.schema.EmployeeDetailsRequestDTO;
@@ -64,13 +65,6 @@ public class EmployeeAdminController {
         return new ResponseEntity(Employee.from(employeeService.getEmployee(employeeId)), HttpStatus.OK);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetails(){
-        return new ResponseEntity((employeeService.findAll()
-                .stream().map(Employee::from)
-                .collect(Collectors.toList())), HttpStatus.OK);
-    }
-
     @GetMapping(params = {"state"})
     public ResponseEntity<List<EmployeeDetailsRequestDTO>> getEmployeesByState(@RequestParam(name = "state", defaultValue = "") String state ){
         return new ResponseEntity(employeeService.findByState(State.valueOf(state)).stream()
@@ -91,6 +85,21 @@ public class EmployeeAdminController {
         return !ObjectUtils.isEmpty(employee) ?
                 new ResponseEntity<>(HttpStatus.NO_CONTENT):
                 new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(params = {"name.first", "name.last"})
+    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetailsByName(@RequestParam(name = "name.first", required = false) String firstName,
+                                                                               @RequestParam(name = "name.last", required = false) String lastName){
+        NameFilter filter = new NameFilter(firstName, lastName);
+        return new ResponseEntity(employeeService.findAllByFilter(filter)
+                .stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetails(){
+        return new ResponseEntity((employeeService.findAll()
+                .stream().map(Employee::from)
+                .collect(Collectors.toList())), HttpStatus.OK);
     }
 
     @GetMapping("/history")

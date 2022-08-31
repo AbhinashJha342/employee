@@ -1,6 +1,7 @@
 package com.example.employee.service;
 
 import com.example.employee.domain.Employee;
+import com.example.employee.domain.Filter;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 
@@ -25,5 +26,7 @@ public interface EmployeeService {
     Employee getEmployee(UUID employeeId);
 
     void archieveEmployee(UUID employeeId);
+
+    List<Employee> findAllByFilter(Filter filter);
 
 }

@@ -43,4 +43,13 @@ public class Name {
     public static NameDTO from(Name name){
         return new NameDTO(name.getFirst(), name.getLast());
     }
+
+    @Override
+    public String toString() {
+        return "Name{" +
+                "id=" + id +
+                ", first='" + first + '\'' +
+                ", last='" + last + '\'' +
+                '}';
+    }
 }

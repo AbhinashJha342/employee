@@ -2,22 +2,17 @@ package com.example.employee.service.impl;
 
 import com.example.employee.domain.Change;
 import com.example.employee.domain.Employee;
-import com.example.employee.domain.EmployeeHistory;
+import com.example.employee.domain.Filter;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
 import com.example.employee.service.HistoryService;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -104,6 +99,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = getEmployee(employeeId);
         employee.setDeleted(true);
         employeeRepository.save(employee);
+    }
+
+    @Override
+    public List<Employee> findAllByFilter(Filter filter) {
+        return filter.doFilter(employeeRepository);
     }
 
 }
