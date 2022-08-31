@@ -17,14 +17,7 @@ public class NameFilter implements Filter{
 
     @Override
     public List<Employee> doFilter(EmployeeRepository employeeRepository) {
-        return employeeRepository.findEmployeesByNameContaining(this.to());
+        return employeeRepository.findEmployeesByName_FirstContainingIgnoreCaseAndName_LastContainingIgnoreCase(this.firstName, this.lastName);
     }
-
-    private Name to(){
-        return new Name(this.firstName, this.lastName);
-    }
-
-
-
 
 }

@@ -27,7 +27,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     Employee findEmployeesByEmployeeIdAndDeletedIsFalse(UUID employeeId);
 
-    List<Employee> findEmployeesByNameContaining(Name name);
+    List<Employee> findEmployeesByName_FirstContainingIgnoreCaseAndName_LastContainingIgnoreCase(@Param("first") String first, @Param("last") String last);
 
 //    @Query(value = "With filtered_employee_id( select * from address where state = :state ), Select * from employee where id in :filtered_employee_id")
 //    int countByAddressState(String state);

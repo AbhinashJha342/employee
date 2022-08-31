@@ -90,9 +90,17 @@ public class EmployeeAdminController {
     @GetMapping(params = {"name.first", "name.last"})
     public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetailsByName(@RequestParam(name = "name.first", required = false) String firstName,
                                                                                @RequestParam(name = "name.last", required = false) String lastName){
+
+        if(ObjectUtils.isEmpty(firstName) && ObjectUtils.isEmpty(lastName))
+            return new ResponseEntity((employeeService.findAll()
+                    .stream().map(Employee::from)
+                    .collect(Collectors.toList())), HttpStatus.OK);
+
         NameFilter filter = new NameFilter(firstName, lastName);
-        return new ResponseEntity(employeeService.findAllByFilter(filter)
-                .stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK);
+        List<Employee> employee = employeeService.findAllByFilter(filter);
+        return !ObjectUtils.isEmpty(employee)?
+                new ResponseEntity(employee.stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK):
+                new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping

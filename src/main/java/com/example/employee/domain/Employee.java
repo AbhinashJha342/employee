@@ -38,7 +38,7 @@ public class Employee {
     @OneToOne(cascade = {CascadeType.PERSIST}, mappedBy = "employee", orphanRemoval = true)
     private Address address;
 
-    @OneToOne(cascade = {CascadeType.PERSIST}, orphanRemoval = true)
+    @OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
     private Name name;
 
     private String dateOfBirth;
