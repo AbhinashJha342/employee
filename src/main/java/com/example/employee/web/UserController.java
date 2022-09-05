@@ -5,10 +5,13 @@ import com.example.employee.web.schema.UserDetailsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController("/user")
+@Controller
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -19,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity createUser(UserDetailsDTO userDetails) {
+    ResponseEntity createUser(@RequestBody UserDetailsDTO userDetails) {
         userService.createUser(UserDetailsDTO.to(userDetails));
         return new ResponseEntity(HttpStatus.OK);
     }

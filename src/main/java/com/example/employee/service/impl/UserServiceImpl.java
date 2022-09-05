@@ -1,6 +1,6 @@
 package com.example.employee.service.impl;
 
-import com.example.employee.domain.User;
+import com.example.employee.domain.UserAndRole;
 import com.example.employee.persistence.UserRepository;
 import com.example.employee.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +17,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUser(User user) {
+    public void createUser(UserAndRole user) {
         userRepository.save(user);
     }
 
     @Override
-    public User getUser(String username) {
-        return userRepository.findUserByUsername(username);
+    public UserAndRole getUser(String username) {
+        return userRepository.findByUsername(username);
     }
 }

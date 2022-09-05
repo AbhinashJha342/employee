@@ -1,10 +1,10 @@
 package com.example.employee.service;
 
-import com.example.employee.domain.User;
+import com.example.employee.domain.UserAndRole;
 
 public interface UserService {
 
-    void createUser(User user);
+    void createUser(UserAndRole user);
 
-    User getUser(String userName);
+    UserAndRole getUser(String userName);
 }

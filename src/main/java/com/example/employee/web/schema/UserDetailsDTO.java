@@ -1,16 +1,12 @@
 package com.example.employee.web.schema;
 
-import com.example.employee.domain.User;
-
+import com.example.employee.domain.UserAndRole;
 import javax.validation.constraints.NotNull;
 
 public class UserDetailsDTO {
 
     @NotNull(message = "username cannot be null")
     private final String username;
-
-    @NotNull(message = "email cannot be null")
-    private final String emailId;
 
     @NotNull(message = "password cannot be null")
     private final String password;
@@ -19,19 +15,14 @@ public class UserDetailsDTO {
     private final String role;
 
 
-    public UserDetailsDTO(String username, String emailId, String password, String role) {
+    public UserDetailsDTO(String username, String password, String role) {
         this.username = username;
-        this.emailId = emailId;
         this.password = password;
         this.role = role;
     }
 
     public String getUsername() {
         return username;
-    }
-
-    public String getEmailId() {
-        return emailId;
     }
 
     public String getPassword() {
@@ -42,9 +33,7 @@ public class UserDetailsDTO {
         return role;
     }
 
-    public static User to(UserDetailsDTO userDetailsDTO){
-
-        return User.builder().setEmail(userDetailsDTO.getEmailId()).setUsername(userDetailsDTO.getUsername())
-                .setPassword(userDetailsDTO.getPassword()).setRole(userDetailsDTO.getRole()).build();
+    public static UserAndRole to(UserDetailsDTO userDetailsDTO){
+        return new UserAndRole(userDetailsDTO.getUsername(), userDetailsDTO.getPassword(), userDetailsDTO.getRole());
     }
 }
