@@ -2,13 +2,14 @@ package com.example.employee.service.impl;
 
 import com.example.employee.domain.UserAndRole;
 import com.example.employee.service.UserService;
+import com.example.employee.web.schema.EmployeeUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -22,7 +23,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        UserAndRole user = userService.getUser(userName);
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        Optional<UserAndRole> user = userService.getUser(userName);
+
+        user.orElseThrow(() -> new UsernameNotFoundException("User not found with username:" + userName));
+
+        return new EmployeeUserDetails(user.get());
     }
 }
