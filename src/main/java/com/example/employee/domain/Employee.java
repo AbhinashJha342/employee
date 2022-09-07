@@ -161,7 +161,7 @@ public class Employee {
                 .setAddress(Address.from(employee.getAddress()))
                 .setEmailDTO(employee.getEmail().stream().map(Email::from).collect(Collectors.toList()))
                 .setDesignation(employee.getDesignation().toString())
-                .setSalary(employee.getSalary())
+                .setSalary("MXN $"+employee.getSalary())
                 .build();
     }
 

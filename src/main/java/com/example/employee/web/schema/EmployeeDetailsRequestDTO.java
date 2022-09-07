@@ -88,8 +88,8 @@ public class EmployeeDetailsRequestDTO {
         Address address = AddressDTO.to(employeeDetailsRequestDTO.getAddress());
 
         Employee emp = new Employee(employeeId, employeeDetailsRequestDTO.getPhone(), employeeDetailsRequestDTO.getGender(),
-                address, NameDTO.to(employeeDetailsRequestDTO.getNames()), emailList, employeeDetailsRequestDTO.dateOfBirth, false,
-                employeeDetailsRequestDTO.getDesignation()!=null ? employeeDetailsRequestDTO.getDesignation() : DesignationType.TRAINEE, employeeDetailsRequestDTO.getSalary()!=null ? "MXN $"+ employeeDetailsRequestDTO.getSalary() : employeeDetailsRequestDTO.getSalary());
+                address, NameDTO.to(employeeDetailsRequestDTO.getNames()), emailList, employeeDetailsRequestDTO.getDateOfBirth(), false,
+                employeeDetailsRequestDTO.getDesignation()!=null ? employeeDetailsRequestDTO.getDesignation() : DesignationType.TRAINEE, employeeDetailsRequestDTO.getSalary()!=null ? employeeDetailsRequestDTO.getSalary() : employeeDetailsRequestDTO.getSalary());
         //emp.getEmail().forEach(email1 -> email1.setEmployee(emp));
         emp.getAddress().setEmployee(emp);
         return emp;

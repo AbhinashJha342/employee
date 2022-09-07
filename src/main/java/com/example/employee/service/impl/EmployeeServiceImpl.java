@@ -9,9 +9,14 @@ import com.example.employee.service.EmployeeService;
 import com.example.employee.service.HistoryService;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,11 +43,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<Employee> findByState(State state) {
         return employeeRepository.getEmployeeByAddress_State(state);
-    }
-
-    @Override
-    public List<Employee> findByDesignation(String designation) {
-        return employeeRepository.getEmployeeByDesignation(designation);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> findAll() {
-        return employeeRepository.findAllByDeletedIsFalse();
+        return employeeRepository.findAllByDeletedIsFalse().orElseThrow(() -> new NotFoundException("No employee found."));
     }
 
     @Override
@@ -106,4 +106,10 @@ public class EmployeeServiceImpl implements EmployeeService {
         return filter.doFilter(employeeRepository);
     }
 
+    @Override
+    public List<Employee> findByBirthdate(String birthDate) {
+        LocalDate date = LocalDate.parse(birthDate);
+        ZonedDateTime dateOfBirth = date.atStartOfDay(ZoneId.systemDefault());
+        return employeeRepository.findEmployeeByDateOfBirthBetween(dateOfBirth, dateOfBirth.plusWeeks(1));
+    }
 }

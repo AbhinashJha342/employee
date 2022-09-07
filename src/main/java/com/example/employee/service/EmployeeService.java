@@ -3,7 +3,9 @@ package com.example.employee.service;
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.Filter;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
+import com.example.employee.web.schema.EmployeeGender;
 import com.example.employee.web.schema.State;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,8 +15,6 @@ public interface EmployeeService {
     EmployeeDetailsResponseDTO createEmployee(Employee employee);
 
     List<Employee> findByState(State state);
-
-    List<Employee> findByDesignation(String designation);
 
     Employee updateEmployee(Employee employee);
 
@@ -28,4 +28,5 @@ public interface EmployeeService {
 
     List<Employee> findAllByFilter(Filter filter);
 
+    List<Employee> findByBirthdate(String birthDate);
 }

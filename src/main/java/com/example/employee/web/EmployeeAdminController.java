@@ -1,15 +1,9 @@
 package com.example.employee.web;
 
-import com.example.employee.domain.Employee;
-import com.example.employee.domain.EmployeeHistory;
-import com.example.employee.domain.NameFilter;
+import com.example.employee.domain.*;
 import com.example.employee.service.EmployeeService;
 import com.example.employee.service.HistoryService;
-import com.example.employee.web.schema.EmployeeDetailsRequestDTO;
-import com.example.employee.web.schema.EmployeeDetailsPatchRequestDTO;
-import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
-import com.example.employee.web.schema.EmployeeHistoryResponseDto;
-import com.example.employee.web.schema.State;
+import com.example.employee.web.schema.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -72,13 +67,6 @@ public class EmployeeAdminController {
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    @GetMapping(params = {"designation"})
-    public ResponseEntity<List<EmployeeDetailsRequestDTO>> getEmployeesByDesignation(@RequestParam(name = "designation", defaultValue = "") String designation){
-        return new ResponseEntity(employeeService.findByDesignation(designation).stream()
-                .map(Employee::from)
-                .collect(Collectors.toList()), HttpStatus.OK);
-    }
-
     @PatchMapping(headers = "Employee-id")
     public ResponseEntity updateEmployeeDetails(@RequestHeader("Employee-id") UUID employeeId, @RequestBody EmployeeDetailsPatchRequestDTO employeeDetailspatchDTO){
         Employee employee = employeeService.updateEmployee(EmployeeDetailsPatchRequestDTO.to(employeeId, employeeDetailspatchDTO));
@@ -101,6 +89,44 @@ public class EmployeeAdminController {
         return !ObjectUtils.isEmpty(employee)?
                 new ResponseEntity(employee.stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK):
                 new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(params = {"designation"})
+    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetailsByDesignation(@RequestParam(name = "designation", required = false) String designation){
+
+        if(ObjectUtils.isEmpty(designation))
+            return new ResponseEntity((employeeService.findAll()
+                    .stream().map(Employee::from)
+                    .collect(Collectors.toList())), HttpStatus.OK);
+
+        Filter filter = new DesignationFilter(designation);
+        List<Employee> employee = employeeService.findAllByFilter(filter);
+        return !ObjectUtils.isEmpty(employee)?
+                new ResponseEntity(employee.stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK):
+                new ResponseEntity(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping(params = {"gender"})
+    public ResponseEntity<List<EmployeeGender>> getEmployeeCountByGender(@RequestParam(name = "gender", required = false) List<String> gender){
+        List<Employee> employees = employeeService.findAll();
+        EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equals("Male")).count());
+        EmployeeGender female = new EmployeeGender("Female", employees.stream().filter(employee -> employee.getGender().equals("Female")).count());
+        List<EmployeeGender> employeeGenderList = Arrays.asList(male, female);
+        return new ResponseEntity(employeeGenderList, HttpStatus.OK);
+    }
+
+    //@GetMapping(params = {"range"})
+    public ResponseEntity<List<EmployeeGender>> getEmployeeSalaryCount(@RequestParam(name = "range", required = false) List<String> range){
+        List<Employee> employees = employeeService.findAll();
+        EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equals("Male")).count());
+        EmployeeGender female = new EmployeeGender("Female", employees.stream().filter(employee -> employee.getGender().equals("Female")).count());
+        List<EmployeeGender> employeeGenderList = Arrays.asList(male, female);
+        return new ResponseEntity(employeeGenderList, HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"birthDate"})
+    public ResponseEntity<List<Employee>> getEmployeeCountByGender(@RequestParam(name = "birthDate", required = false) String birthDate){
+        return new ResponseEntity(employeeService.findByBirthdate(birthDate), HttpStatus.OK);
     }
 
     @GetMapping
