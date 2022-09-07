@@ -109,7 +109,7 @@ public class EmployeeAdminController {
 
     @GetMapping(params = {"gender"})
     public ResponseEntity<List<EmployeeGender>> getEmployeeCountByGender(@RequestParam(name = "gender", required = false) Set<String> gender){
-        List<EmployeeGender> employeeGenderList = Arrays.asList();
+        List<EmployeeGender> employeeGenderList;
         if(ObjectUtils.isEmpty(gender) || gender.size() == 2){
             List<Employee> employees = employeeService.findAll();
             EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equalsIgnoreCase("Male")).count());
