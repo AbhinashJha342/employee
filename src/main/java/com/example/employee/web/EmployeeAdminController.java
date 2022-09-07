@@ -133,8 +133,13 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(params = {"birthDate"})
-    public ResponseEntity<List<Employee>> getEmployeeCountByGender(@RequestParam(name = "birthDate", required = false) String birthDate){
-        return new ResponseEntity(employeeService.findByBirthdate(birthDate), HttpStatus.OK);
+    public ResponseEntity<List<EmployeeBirthdayDetails>> getEmployeeCountByGender(@RequestParam(name = "birthDate", required = false) String birthDate){
+        return new ResponseEntity(
+                employeeService.findByBirthdate(birthDate)
+                        .stream()
+                        .map(employee -> new EmployeeBirthdayDetails(employee))
+                        .collect(Collectors.toList()),
+                HttpStatus.OK);
     }
 
     @GetMapping

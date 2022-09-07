@@ -110,19 +110,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeBirthdayDetails> findByBirthdate(String birthDate) {
-        LocalDate date = LocalDate.parse(birthDate);
-        ZonedDateTime dateOfBirth = date.atStartOfDay(ZoneId.systemDefault());
-        Optional<List<Employee>> employees = employeeRepository.findEmployeeByDateOfBirthBetween(dateOfBirth, dateOfBirth.plusWeeks(1));
+    public List<Employee> findByBirthdate(String birthDate) {
+        ZonedDateTime dateOfBirth = null;
+
+        if(!ObjectUtils.isEmpty(birthDate)){
+            LocalDate date = LocalDate.parse(birthDate);
+            dateOfBirth = date.atStartOfDay(ZoneId.systemDefault());
+        } else {
+            dateOfBirth = ZonedDateTime.now();
+        }
+
+        Optional<List<Employee>> employees = employeeRepository.findEmployeeByDateOfBirthBetween(dateOfBirth);
         employees.orElseThrow(() -> new NotFoundException("no employee found whose birthday is on date:"+birthDate+"or in the week ahead."));
-        return employees.get().stream()
-                .map(employee -> new EmployeeBirthdayDetails(employee))
-                .collect(Collectors.toList());
+        return employees.get();
     }
 
     @Override
     public List<Employee> findByGender(String gender) {
-        Optional<List<Employee>> employees = employeeRepository.findEmployeeByGender(gender);
+        Optional<List<Employee>> employees = employeeRepository.findEmployeeByGenderAndDeletedFalse(gender);
         employees.orElseThrow(()-> new NotFoundException("no employees found who are "+gender));
         return employees.get();
     }

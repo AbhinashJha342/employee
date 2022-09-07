@@ -29,7 +29,7 @@ public interface EmployeeService {
 
     List<Employee> findAllByFilter(Filter filter);
 
-    List<EmployeeBirthdayDetails> findByBirthdate(String birthDate);
+    List<Employee> findByBirthdate(String birthDate);
 
     List<Employee> findByGender(String gender);
 }
