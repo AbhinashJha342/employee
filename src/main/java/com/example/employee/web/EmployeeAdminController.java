@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -107,11 +108,18 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(params = {"gender"})
-    public ResponseEntity<List<EmployeeGender>> getEmployeeCountByGender(@RequestParam(name = "gender", required = false) List<String> gender){
-        List<Employee> employees = employeeService.findAll();
-        EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equals("Male")).count());
-        EmployeeGender female = new EmployeeGender("Female", employees.stream().filter(employee -> employee.getGender().equals("Female")).count());
-        List<EmployeeGender> employeeGenderList = Arrays.asList(male, female);
+    public ResponseEntity<List<EmployeeGender>> getEmployeeCountByGender(@RequestParam(name = "gender", required = false) Set<String> gender){
+        List<EmployeeGender> employeeGenderList = Arrays.asList();
+        if(ObjectUtils.isEmpty(gender) || gender.size() == 2){
+            List<Employee> employees = employeeService.findAll();
+            EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equalsIgnoreCase("Male")).count());
+            EmployeeGender female = new EmployeeGender("Female", employees.stream().filter(employee -> employee.getGender().equalsIgnoreCase("Female")).count());
+            employeeGenderList = Arrays.asList(male, female);
+        } else {
+            List<Employee> employees = employeeService.findByGender(gender.stream().findFirst().get());
+            employeeGenderList = Arrays.asList(new EmployeeGender(gender.stream().findFirst().get(), employees.stream().count()));
+        }
+
         return new ResponseEntity(employeeGenderList, HttpStatus.OK);
     }
 

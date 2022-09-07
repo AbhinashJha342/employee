@@ -33,8 +33,11 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     List<Employee> findEmployeeByDesignation(DesignationType designation);
 
     @Query(value = "select emp from Employee emp Where (DATE_PART('doy', cast(:dateOfBirth as timestamp )) - DATE_PART('doy', cast(:nextDate as timestamp)))<= 7" +
-            " OR (DATE_PART('doy', cast(:nextDate as timestamp)) - DATE_PART('doy', cast(:dateOfBirth as timestamp )))<= 7")
-    List<Employee> findEmployeeByDateOfBirthBetween(ZonedDateTime dateOfBirth, ZonedDateTime nextDate);
+            " OR (DATE_PART('doy', cast(:nextDate as timestamp)) - DATE_PART('doy', cast(:dateOfBirth as timestamp )))<= 7" +
+            " AND emp.deleted = cast(FALSE as boolean) ")
+    Optional<List<Employee>> findEmployeeByDateOfBirthBetween(ZonedDateTime dateOfBirth, ZonedDateTime nextDate);
+
+    Optional<List<Employee>> findEmployeeByGender(String gender);
 
 //    @Query(value = "With filtered_employee_id( select * from address where state = :state ), Select * from employee where id in :filtered_employee_id")
 //    int countByAddressState(String state);

@@ -7,6 +7,7 @@ import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
 import com.example.employee.service.HistoryService;
+import com.example.employee.web.schema.EmployeeBirthdayDetails;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,9 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -107,9 +110,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<Employee> findByBirthdate(String birthDate) {
+    public List<EmployeeBirthdayDetails> findByBirthdate(String birthDate) {
         LocalDate date = LocalDate.parse(birthDate);
         ZonedDateTime dateOfBirth = date.atStartOfDay(ZoneId.systemDefault());
-        return employeeRepository.findEmployeeByDateOfBirthBetween(dateOfBirth, dateOfBirth.plusWeeks(1));
+        Optional<List<Employee>> employees = employeeRepository.findEmployeeByDateOfBirthBetween(dateOfBirth, dateOfBirth.plusWeeks(1));
+        employees.orElseThrow(() -> new NotFoundException("no employee found whose birthday is on date:"+birthDate+"or in the week ahead."));
+        return employees.get().stream()
+                .map(employee -> new EmployeeBirthdayDetails(employee))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Employee> findByGender(String gender) {
+        Optional<List<Employee>> employees = employeeRepository.findEmployeeByGender(gender);
+        employees.orElseThrow(()-> new NotFoundException("no employees found who are "+gender));
+        return employees.get();
     }
 }

@@ -2,6 +2,7 @@ package com.example.employee.service;
 
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.Filter;
+import com.example.employee.web.schema.EmployeeBirthdayDetails;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.EmployeeGender;
 import com.example.employee.web.schema.State;
@@ -28,5 +29,7 @@ public interface EmployeeService {
 
     List<Employee> findAllByFilter(Filter filter);
 
-    List<Employee> findByBirthdate(String birthDate);
+    List<EmployeeBirthdayDetails> findByBirthdate(String birthDate);
+
+    List<Employee> findByGender(String gender);
 }
