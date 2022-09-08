@@ -1,8 +1,6 @@
 package com.example.employee.persistence;
 
 import com.example.employee.domain.Employee;
-import com.example.employee.domain.Name;
-import com.example.employee.domain.NameFilter;
 import com.example.employee.web.schema.DesignationType;
 import com.example.employee.web.schema.State;
 import org.springframework.data.jpa.repository.Query;
@@ -20,17 +18,17 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     //int countByAddress_State(State state);
 
-    List<Employee> getEmployeeByAddress_State(State state);
+    Optional<List<Employee>> getEmployeeByAddress_State(State state);
 
-    List<Employee> getEmployeeByEmployeeIdIn(List<UUID> employeeIds);
+    Optional<List<Employee>> getEmployeeByEmployeeIdIn(List<UUID> employeeIds);
 
     Optional<List<Employee>> findAllByDeletedIsFalse();
 
-    Employee findEmployeesByEmployeeIdAndDeletedIsFalse(UUID employeeId);
+    Optional<Employee> findEmployeesByEmployeeIdAndDeletedIsFalse(UUID employeeId);
 
-    List<Employee> findEmployeesByName_FirstContainingIgnoreCaseAndName_LastContainingIgnoreCase(@Param("first") String first, @Param("last") String last);
+    Optional<List<Employee>> findEmployeesByName_FirstContainingIgnoreCaseAndName_LastContainingIgnoreCase(@Param("first") String first, @Param("last") String last);
 
-    List<Employee> findEmployeeByDesignation(DesignationType designation);
+    Optional<List<Employee>> findEmployeeByDesignation(DesignationType designation);
 
     @Query(value = "select emp from Employee emp Where " +
             "DATE_PART('doy', cast(emp.dateOfBirth as timestamp)) - DATE_PART('doy', cast(:dateOfBirth as timestamp)) >= 0" +
@@ -39,6 +37,8 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     Optional<List<Employee>> findEmployeeByDateOfBirthBetween(ZonedDateTime dateOfBirth);
 
     Optional<List<Employee>> findEmployeeByGenderAndDeletedFalse(String gender);
+
+    Optional<List<Employee>> findEmployeesByDesignationInAndDeletedFalse(List<DesignationType> role);
 
 //    @Query(value = "With filtered_employee_id( select * from address where state = :state ), Select * from employee where id in :filtered_employee_id")
 //    int countByAddressState(String state);

@@ -1,5 +1,8 @@
 package com.example.employee.web.schema;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public enum DesignationType {
 
     TRAINEE("Trainee"),
@@ -16,5 +19,9 @@ public enum DesignationType {
 
     public String getValue() {
         return value;
+    }
+
+    public Stream<DesignationType> getRoles() {
+       return Arrays.stream(DesignationType.values());
     }
 }

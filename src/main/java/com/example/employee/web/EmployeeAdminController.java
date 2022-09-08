@@ -9,15 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -140,6 +132,25 @@ public class EmployeeAdminController {
                         .map(employee -> new EmployeeBirthdayDetails(employee))
                         .collect(Collectors.toList()),
                 HttpStatus.OK);
+    }
+
+    @GetMapping(params = {"roles"})
+    public ResponseEntity getEmployeeByRole(@RequestParam(name = "roles") List<String> roles){
+        List<EmployeeByRole> employeeRolesList;
+        if(ObjectUtils.isEmpty(roles)){
+            List<Employee> employees = employeeService.findAll();
+            employeeRolesList = Arrays.stream(DesignationType.values())
+                    .map(role-> new EmployeeByRole( role.getValue(),
+                    employees.stream().filter(employee -> employee.getDesignation().equals(role)).count()))
+                    .collect(Collectors.toList());
+        } else {
+            List<Employee> employees = employeeService.getEmployeesByRoles(roles);
+            employeeRolesList = roles.stream()
+                    .map(role -> new EmployeeByRole(role,
+                            employees.stream().filter(employee -> employee.getDesignation().equals(DesignationType.valueOf(role))).count()))
+                    .collect(Collectors.toList());
+        }
+        return new ResponseEntity(employeeRolesList, HttpStatus.OK);
     }
 
     @GetMapping

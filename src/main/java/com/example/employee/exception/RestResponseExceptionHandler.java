@@ -26,7 +26,7 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity handleNotFoundException(NotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class, ValidationException.class})
