@@ -6,7 +6,6 @@ public class EmployeeByRole {
 
     private final long count;
 
-
     public EmployeeByRole(String role, long count) {
         this.role = role;
         this.count = count;

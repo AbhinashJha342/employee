@@ -1,6 +1,5 @@
 package com.example.employee.web.schema;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,11 +19,8 @@ public class EmployeeDetailsResponseDTO {
 
     private final String dateOfBirth;
 
-    private final String designation;
 
-    private final String salary;
-
-    public EmployeeDetailsResponseDTO(UUID employeeId, NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, String designation, String salary) {
+    public EmployeeDetailsResponseDTO(UUID employeeId, NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth) {
         this.employeeId = employeeId;
         this.names = names;
         this.gender = gender;
@@ -32,8 +28,6 @@ public class EmployeeDetailsResponseDTO {
         this.address = address;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
-        this.designation = designation;
-        this.salary = salary;
     }
 
     public UUID getEmployeeId() {
@@ -62,14 +56,6 @@ public class EmployeeDetailsResponseDTO {
 
     public String getDateOfBirth() {
         return dateOfBirth;
-    }
-
-    public String getDesignation() {
-        return designation;
-    }
-
-    public String getSalary() {
-        return salary;
     }
 
     public static Builder builder(){
@@ -131,18 +117,8 @@ public class EmployeeDetailsResponseDTO {
             return this;
         }
 
-        public Builder setDesignation(String designation) {
-            this.designation = designation;
-            return this;
-        }
-
-        public Builder setSalary(String salary) {
-            this.salary = salary;
-            return this;
-        }
-
         public EmployeeDetailsResponseDTO build(){
-            return new EmployeeDetailsResponseDTO(this.employeeId, this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth, this.designation, this.salary);
+            return new EmployeeDetailsResponseDTO(this.employeeId, this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth);
         }
     }
 }

@@ -25,9 +25,6 @@ public class EmployeeDetailsPatchRequestDTO {
 
     private Optional<String> dateOfBirth;
 
-    private Optional<DesignationType> designation;
-
-    private Optional<String> salary;
 
     public EmployeeDetailsPatchRequestDTO() {
     }
@@ -43,8 +40,7 @@ public class EmployeeDetailsPatchRequestDTO {
                                 .stream()
                                 .map(EmailDTO::to).collect(Collectors.toList()) : Collections.emptyList(),
                 Optional.ofNullable(employeeDetailsPatchRequestDTO.getDateOfBirth()).isPresent() ? employeeDetailsPatchRequestDTO.getDateOfBirth().get() : "",
-                false, Optional.ofNullable(employeeDetailsPatchRequestDTO.getDesignation()).isPresent() ? employeeDetailsPatchRequestDTO.getDesignation().get() : DesignationType.TRAINEE,
-                Optional.ofNullable(employeeDetailsPatchRequestDTO.getSalary()).isPresent() ? "MXN $"+employeeDetailsPatchRequestDTO.getSalary().get() : "");
+                false);
     }
 
     public NameDTO getNames() {
@@ -71,11 +67,4 @@ public class EmployeeDetailsPatchRequestDTO {
         return dateOfBirth;
     }
 
-    public Optional<DesignationType> getDesignation() {
-        return designation;
-    }
-
-    public Optional<String> getSalary() {
-        return salary;
-    }
 }

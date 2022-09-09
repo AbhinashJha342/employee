@@ -29,6 +29,11 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DbNotUpdatedException.class)
+    public ResponseEntity handleDbNotUpdatedException(DbNotUpdatedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(value = {ConstraintViolationException.class, ValidationException.class})
     public ResponseEntity handleConflict(ValidationException ex, WebRequest request) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

@@ -1,13 +1,11 @@
 package com.example.employee.service.impl;
 
-import com.example.employee.domain.Change;
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.Filter;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.service.EmployeeService;
-import com.example.employee.service.HistoryService;
-import com.example.employee.web.schema.DesignationType;
+import com.example.employee.service.RoleAndSalaryService;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.example.employee.web.schema.State;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -27,13 +24,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
 
-    private final HistoryService historyService;
+    private final RoleAndSalaryService roleAndSalaryService;
 
-    //private final EmployeeHistoryRepository historyRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, HistoryService historyService){
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, RoleAndSalaryService historyService){
         this.employeeRepository = employeeRepository;
-        this.historyService = historyService;
+        this.roleAndSalaryService = historyService;
     }
 
     @Override
@@ -43,7 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> findByState(State state) {
-        return employeeRepository.getEmployeeByAddress_State(state)
+        return employeeRepository.getEmployeeByAddress_StateAndDeletedFalse(state)
                 .orElseThrow(()-> new NotFoundException("no employees found who are from state "+state.toString()));
     }
 
@@ -53,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(ObjectUtils.isEmpty(existingEmployee)) {
             throw new NotFoundException("Employee not found but trying to update it - employeeId: " + employee.getEmployeeId());
         }
-        Change existingData = new Change(existingEmployee.getDesignation().toString(), existingEmployee.getSalary());
+        //Change existingData = new Change(existingEmployee.getDesignation().toString(), existingEmployee.getSalary());
         existingEmployee.setEmployeeId(employee.getEmployeeId());
 
         if(existingEmployee.equals(employee)){
@@ -62,28 +58,26 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         existingEmployee.setAddress(employee.getAddress());
         existingEmployee.setDateOfBirth(employee.getDateOfBirth());
-        existingEmployee.setDesignation(employee.getDesignation());
         existingEmployee.setGender(employee.getGender());
         existingEmployee.setName(employee.getName());
         existingEmployee.setPhone(employee.getPhone());
-        existingEmployee.setSalary(employee.getSalary());
         existingEmployee.getEmail().clear();
         existingEmployee.getEmail().addAll(employee.getEmail());
 
         existingEmployee.getAddress().setEmployee(existingEmployee);
 
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
-        Change updatedData = new Change(updatedEmployee.getDesignation().toString(), updatedEmployee.getSalary());
+        //Change updatedData = new Change(updatedEmployee.getDesignation().toString(), updatedEmployee.getSalary());
 
         //TODO make the equality check and then update the history db.
-        historyService.saveEmployeeHistory(existingEmployee.getEmployeeId(), existingData, updatedData);
+        //historyService.saveEmployeeHistory(existingEmployee.getEmployeeId(), existingData, updatedData);
 
         return updatedEmployee;
     }
 
     @Override
     public List<Employee> getEmployees(List<UUID> employeeIds) {
-        return employeeRepository.getEmployeeByEmployeeIdIn(employeeIds).
+        return employeeRepository.getEmployeeByEmployeeIdInAndDeletedIsFalse(employeeIds).
                 orElseThrow(()-> new NotFoundException("no employees found with the passed uuids "+employeeIds.stream().toString()));
     }
 
@@ -103,6 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = getEmployee(employeeId);
         employee.setDeleted(true);
         employeeRepository.save(employee);
+        roleAndSalaryService.updateEndDate(employeeId);
     }
 
     @Override
@@ -130,14 +125,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> findByGender(String gender) {
         Optional<List<Employee>> employees = employeeRepository.findEmployeeByGenderAndDeletedFalse(gender);
         employees.orElseThrow(()-> new NotFoundException("no employees found who are "+gender));
-        return employees.get();
-    }
-
-    @Override
-    public List<Employee> getEmployeesByRoles(List<String> roles) {
-        List<DesignationType> roleList = roles.stream().map(role -> DesignationType.valueOf(role)).collect(Collectors.toList());
-        Optional<List<Employee>> employees = employeeRepository.findEmployeesByDesignationInAndDeletedFalse(roleList);
-        employees.orElseThrow(() -> new NotFoundException("no employees found for the role "+roles.toString()));
         return employees.get();
     }
 }

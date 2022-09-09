@@ -1,24 +1,10 @@
 package com.example.employee.domain;
 
-import com.example.employee.web.schema.DesignationType;
 import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import javax.persistence.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -45,12 +31,7 @@ public class Employee {
 
     private boolean deleted;
 
-    @Enumerated(EnumType.STRING)
-    private DesignationType designation;
-
-    private String salary;
-
-    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean deleted, DesignationType designation, String salary) {
+    public Employee(UUID employeeId, String phone, String gender, Address address, Name name, List<Email> email, String dateOfBirth, boolean deleted) {
         this.employeeId = employeeId;
         this.phone = phone;
         this.gender = gender;
@@ -59,8 +40,6 @@ public class Employee {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.deleted = deleted;
-        this.designation = designation;
-        this.salary = salary;
     }
 
     protected Employee() {}
@@ -138,30 +117,12 @@ public class Employee {
         this.employeeId = employeeId;
     }
 
-    public DesignationType getDesignation() {
-        return designation;
-    }
-
-    public void setDesignation(DesignationType designation) {
-        this.designation = designation;
-    }
-
-    public String getSalary() {
-        return salary;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
-
     public static EmployeeDetailsResponseDTO from(Employee employee){
         return EmployeeDetailsResponseDTO.builder().setEmployeeId(employee.getEmployeeId())
                 .setNames(Name.from(employee.getName()))
                 .setGender(employee.getGender()).setDateOfBirth(employee.getDateOfBirth()).setPhoneNumber(employee.getPhone())
                 .setAddress(Address.from(employee.getAddress()))
                 .setEmailDTO(employee.getEmail().stream().map(Email::from).collect(Collectors.toList()))
-                .setDesignation(employee.getDesignation().toString())
-                .setSalary(employee.getSalary()!=null? "MXN $"+employee.getSalary(): "0")
                 .build();
     }
 
@@ -170,11 +131,11 @@ public class Employee {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return deleted == employee.deleted && Objects.equals(id, employee.id) && Objects.equals(employeeId, employee.employeeId) && Objects.equals(phone, employee.phone) && Objects.equals(gender, employee.gender) && Objects.equals(email, employee.email) && Objects.equals(address, employee.address) && Objects.equals(name, employee.name) && Objects.equals(dateOfBirth, employee.dateOfBirth) && Objects.equals(designation, employee.designation) && Objects.equals(salary, employee.salary);
+        return deleted == employee.deleted && Objects.equals(id, employee.id) && Objects.equals(employeeId, employee.employeeId) && Objects.equals(phone, employee.phone) && Objects.equals(gender, employee.gender) && Objects.equals(email, employee.email) && Objects.equals(address, employee.address) && Objects.equals(name, employee.name) && Objects.equals(dateOfBirth, employee.dateOfBirth);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, employeeId, phone, gender, email, address, name, dateOfBirth, deleted, designation, salary);
+        return Objects.hash(id, employeeId, phone, gender, email, address, name, dateOfBirth, deleted);
     }
 }

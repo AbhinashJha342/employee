@@ -2,7 +2,7 @@ package com.example.employee.web;
 
 import com.example.employee.domain.*;
 import com.example.employee.service.EmployeeService;
-import com.example.employee.service.HistoryService;
+import com.example.employee.service.RoleAndSalaryService;
 import com.example.employee.web.schema.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,14 +19,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/employees/admin/employee")
+@RequestMapping("/admin/employees")
 public class EmployeeAdminController {
 
     @Autowired
     private EmployeeService employeeService;
 
     @Autowired
-    private HistoryService employeeHistory;
+    private RoleAndSalaryService roleAndSalaryService;
 
     @DeleteMapping(headers = "Employee-id")
     public ResponseEntity archieve(@RequestHeader("Employee-id") UUID employeeId){
@@ -54,9 +54,9 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(params = {"state"})
-    public ResponseEntity<List<EmployeeDetailsRequestDTO>> getEmployeesByState(@RequestParam(name = "state", defaultValue = "") String state ){
+    public ResponseEntity<List<EmployeeByState>> getEmployeesByState(@RequestParam(name = "state", defaultValue = "") String state ){
         return new ResponseEntity(employeeService.findByState(State.valueOf(state)).stream()
-                .map(Employee::from)
+                .map(employee -> new EmployeeByState(employee))
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
@@ -85,18 +85,12 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(params = {"designation"})
-    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetailsByDesignation(@RequestParam(name = "designation", required = false) String designation){
+    public ResponseEntity<List<EmployeeRoleDetails>> getEmployeeDetailsByDesignation(@RequestParam(name = "designation", required = false) String designation){
 
         if(ObjectUtils.isEmpty(designation))
-            return new ResponseEntity((employeeService.findAll()
-                    .stream().map(Employee::from)
-                    .collect(Collectors.toList())), HttpStatus.OK);
+            return new ResponseEntity(roleAndSalaryService.findAllRoleAndSalary(), HttpStatus.OK);
 
-        Filter filter = new DesignationFilter(designation);
-        List<Employee> employee = employeeService.findAllByFilter(filter);
-        return !ObjectUtils.isEmpty(employee)?
-                new ResponseEntity(employee.stream().map(Employee::from).collect(Collectors.toList()), HttpStatus.OK):
-                new ResponseEntity(HttpStatus.NOT_FOUND);
+        return new ResponseEntity(roleAndSalaryService.getAllEmployeesByRole(Arrays.asList(DesignationType.valueOf(designation))), HttpStatus.OK);
     }
 
     @GetMapping(params = {"gender"})
@@ -135,19 +129,15 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(params = {"roles"})
-    public ResponseEntity getEmployeeByRole(@RequestParam(name = "roles") List<String> roles){
+    public ResponseEntity<List<EmployeeByRole>> getEmployeeByRole(@RequestParam(name = "roles") List<DesignationType> roles){
         List<EmployeeByRole> employeeRolesList;
         if(ObjectUtils.isEmpty(roles)){
-            List<Employee> employees = employeeService.findAll();
             employeeRolesList = Arrays.stream(DesignationType.values())
-                    .map(role-> new EmployeeByRole( role.getValue(),
-                    employees.stream().filter(employee -> employee.getDesignation().equals(role)).count()))
+                    .map(role-> new EmployeeByRole( role.getValue(), roleAndSalaryService.findAllRoleAndSalary().stream().count()))
                     .collect(Collectors.toList());
         } else {
-            List<Employee> employees = employeeService.getEmployeesByRoles(roles);
             employeeRolesList = roles.stream()
-                    .map(role -> new EmployeeByRole(role,
-                            employees.stream().filter(employee -> employee.getDesignation().equals(DesignationType.valueOf(role))).count()))
+                    .map(role -> new EmployeeByRole(role.getValue(), roleAndSalaryService.getAllEmployeesByRole(roles).stream().count()))
                     .collect(Collectors.toList());
         }
         return new ResponseEntity(employeeRolesList, HttpStatus.OK);
@@ -160,9 +150,22 @@ public class EmployeeAdminController {
                 .collect(Collectors.toList())), HttpStatus.OK);
     }
 
-    @GetMapping("/history")
-    public ResponseEntity<EmployeeHistoryResponseDto> getEmployeeHistory(@RequestHeader("Employee-id") UUID employeeId){
-       return new ResponseEntity(EmployeeHistory.from(employeeHistory.getEmployeeHistory(employeeId)), HttpStatus.OK);
+    @PostMapping("/{id}/assign-role")
+    public ResponseEntity assignRoleAndSalary(@RequestBody EmployeeRoleAndSalaryDTO employeeRoleAndSalaryDTO, @Valid @PathVariable String id){
+        UUID employeeID = UUID.fromString(id);
+        roleAndSalaryService.saveEmployeeRoleAndSalaryHistory(employeeID, employeeRoleAndSalaryDTO);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/{id}/update-role-salary")
+    public ResponseEntity<EmployeeRoleAndSalaryPatchDTO> updateRoleAndSalary(@RequestBody EmployeeRoleAndSalaryPatchDTO employeeRoleAndSalaryPatchDTO, @Valid @PathVariable String id){
+        UUID employeeID = UUID.fromString(id);
+        return new ResponseEntity(roleAndSalaryService.updateRoleAndSalary(employeeID, employeeRoleAndSalaryPatchDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/role-salary-history")
+    public ResponseEntity<EmployeeRoleAndSalaryResponseDTO> getEmployeeHistory(@PathVariable UUID id){
+       return new ResponseEntity(EmployeeRoleAndSalary.to(roleAndSalaryService.getEmployeeRoleAndSalaryHistory(id), id), HttpStatus.OK);
     }
 
     private List<Employee> getEmployees(List<UUID> employeeIds){

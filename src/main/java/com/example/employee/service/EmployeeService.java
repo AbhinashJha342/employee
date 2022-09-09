@@ -29,6 +29,4 @@ public interface EmployeeService {
     List<Employee> findByBirthdate(String birthDate);
 
     List<Employee> findByGender(String gender);
-
-    List<Employee> getEmployeesByRoles(List<String> roles);
 }

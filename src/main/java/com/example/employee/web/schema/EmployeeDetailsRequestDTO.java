@@ -28,19 +28,13 @@ public class EmployeeDetailsRequestDTO {
 
     private final String dateOfBirth;
 
-    private final DesignationType designation;
-
-    private final String salary;
-
-    private EmployeeDetailsRequestDTO(NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth, DesignationType designation, String salary) {
+    private EmployeeDetailsRequestDTO(NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth) {
         this.names = names;
         this.gender = gender;
         this.email = CollectionUtils.isEmpty(email) ? new ArrayList<>() : email;
         this.address = address;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
-        this.designation = designation;
-        this.salary = salary;
     }
 
     public NameDTO getNames() {
@@ -71,14 +65,6 @@ public class EmployeeDetailsRequestDTO {
         return new Builder();
     }
 
-    public DesignationType getDesignation() {
-        return designation;
-    }
-
-    public String getSalary() {
-        return salary;
-    }
-
     public static Employee to(UUID employeeId, EmployeeDetailsRequestDTO employeeDetailsRequestDTO){
         List<Email> emailList = Collections.emptyList();
         if(!employeeDetailsRequestDTO.getEmail().isEmpty()){
@@ -88,8 +74,7 @@ public class EmployeeDetailsRequestDTO {
         Address address = AddressDTO.to(employeeDetailsRequestDTO.getAddress());
 
         Employee emp = new Employee(employeeId, employeeDetailsRequestDTO.getPhone(), employeeDetailsRequestDTO.getGender(),
-                address, NameDTO.to(employeeDetailsRequestDTO.getNames()), emailList, employeeDetailsRequestDTO.getDateOfBirth(), false,
-                employeeDetailsRequestDTO.getDesignation()!=null ? employeeDetailsRequestDTO.getDesignation() : DesignationType.TRAINEE, employeeDetailsRequestDTO.getSalary()!=null ? employeeDetailsRequestDTO.getSalary() : employeeDetailsRequestDTO.getSalary());
+                address, NameDTO.to(employeeDetailsRequestDTO.getNames()), emailList, employeeDetailsRequestDTO.getDateOfBirth(), false);
         //emp.getEmail().forEach(email1 -> email1.setEmployee(emp));
         emp.getAddress().setEmployee(emp);
         return emp;
@@ -150,18 +135,8 @@ public class EmployeeDetailsRequestDTO {
             return this;
         }
 
-        public Builder setDesignation(DesignationType designation) {
-            this.designation = designation;
-            return this;
-        }
-
-        public Builder setSalary(String salary) {
-            this.salary = salary;
-            return this;
-        }
-
         public EmployeeDetailsRequestDTO build(){
-            return new EmployeeDetailsRequestDTO(this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth, this.designation, this.salary);
+            return new EmployeeDetailsRequestDTO(this.names, this.gender, this.emailDTO, this.address, this.phoneNumber, this.dateOfBirth);
         }
     }
 }

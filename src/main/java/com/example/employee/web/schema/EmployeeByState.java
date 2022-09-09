@@ -1,25 +1,29 @@
 package com.example.employee.web.schema;
 
+import com.example.employee.domain.Address;
 import com.example.employee.domain.Email;
 import com.example.employee.domain.Employee;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EmployeeBirthdayDetails {
+public class EmployeeByState {
 
     private final NameDTO name;
 
     private final String phone;
 
-    private final String dateOfBirth;
+    private final AddressDTO addressDTO;
+
+    private final String gender;
 
     private final List<EmailDTO> emailDTO;
 
-    public EmployeeBirthdayDetails(Employee employee) {
+    public EmployeeByState(Employee employee) {
         this.name = new NameDTO(employee.getName().getFirst(), employee.getName().getLast());
         this.phone = employee.getPhone();
-        this.dateOfBirth = employee.getDateOfBirth();
+        this.addressDTO = Address.from(employee.getAddress());
+        this.gender = employee.getGender();
         this.emailDTO = employee.getEmail().stream().map(Email::from).collect(Collectors.toList());
     }
 
@@ -31,8 +35,12 @@ public class EmployeeBirthdayDetails {
         return phone;
     }
 
-    public String getDateOfBirth() {
-        return dateOfBirth;
+    public AddressDTO getAddressDTO() {
+        return addressDTO;
+    }
+
+    public String getGender() {
+        return gender;
     }
 
     public List<EmailDTO> getEmailDTO() {
