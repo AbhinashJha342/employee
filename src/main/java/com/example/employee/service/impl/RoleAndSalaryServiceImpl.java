@@ -67,8 +67,7 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
 
     @Override
     public EmployeeRoleAndSalary getEmployeeRoleAndSalaryHistory(UUID employeeId) {
-        employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeId).orElseThrow(()-> new NotFoundException("No employee with employeeID "+employeeId+" exists in the organization"));
-        return employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeId).orElseThrow(()-> new NotFoundException("No employee with employeeID "+employeeId+" exists in the organization"));
+        return employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeId).orElseThrow(()-> new NotFoundException("No role assigned to employee or employee with employeeId "+employeeId+" doesn't exist in the organization"));
     }
 
     @Override
