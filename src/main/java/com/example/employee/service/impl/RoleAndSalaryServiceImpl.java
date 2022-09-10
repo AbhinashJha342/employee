@@ -68,13 +68,13 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
     @Override
     public EmployeeRoleAndSalary getEmployeeRoleAndSalaryHistory(UUID employeeId) {
         employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeId).orElseThrow(()-> new NotFoundException("No employee with employeeID "+employeeId+" exists in the organization"));
-        return employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNotNull(employeeId).orElseThrow(()-> new NotFoundException("No employee with employeeID "+employeeId+" exists in the organization"));
+        return employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeId).orElseThrow(()-> new NotFoundException("No employee with employeeID "+employeeId+" exists in the organization"));
     }
 
     @Override
     public EmployeeRoleAndSalaryPatchDTO updateRoleAndSalary(UUID employeeId, EmployeeRoleAndSalaryPatchDTO employeeRoleAndSalaryPatchDTO) {
         employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeId).orElseThrow(()-> new NotFoundException("no employee exists with employeeID "+employeeId));
-        Optional<EmployeeRoleAndSalary> roleAndSalaryHistory = employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNotNull(employeeId);
+        Optional<EmployeeRoleAndSalary> roleAndSalaryHistory = employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeId);
         roleAndSalaryHistory.orElseThrow(()-> new NotFoundException("No roles assigned to "+employeeId));
         EmployeeRoleAndSalary currentRoleAndSalary = roleAndSalaryHistory.get();
         if(employeeRoleAndSalaryPatchDTO.canBeUpdated(currentRoleAndSalary.getEndDate(), currentRoleAndSalary.getRole(), currentRoleAndSalary.getStartDate())){
@@ -90,11 +90,13 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
 
     @Override
     public List<EmployeeRoleDetails> getAllEmployeesByRole(List<DesignationType> role) {
-        List<EmployeeRoleAndSalary> employeeRoleAndSalaries = employeeRoleAndSalaryRepository.getAllByRoleInAndEndDateIsNotNull(role);
+        List<EmployeeRoleAndSalary> employeeRoleAndSalaries = employeeRoleAndSalaryRepository.getAllByRoleInAndEndDateIsNull(role);
         List<UUID> employeeIDs = employeeRoleAndSalaries.stream().map(employeeRoleAndSalary -> employeeRoleAndSalary.getEmployeeId()).collect(Collectors.toList());
-        return employeeRepository.getEmployeeByEmployeeIdInAndDeletedIsFalse(employeeIDs)
-                .orElseThrow(()-> new NotFoundException("There are no employees with the roles mentioned"))
-                .stream().flatMap(employee -> employeeRoleAndSalaries.stream().map(roleAndSalary -> new EmployeeRoleDetails(employee, roleAndSalary)))
+        List<Employee> employeeList = employeeRepository.getEmployeeByEmployeeIdInAndDeletedIsFalse(employeeIDs).orElseThrow(()-> new NotFoundException("There are no employees with the roles mentioned"));
+
+        return employeeList.stream().flatMap(employee -> employeeRoleAndSalaries.stream()
+                        .filter(employeeRoleAndSalary -> employeeRoleAndSalary.getEmployeeId().toString().equals(employee.getEmployeeId().toString()))
+                        .map(roleAndSalary -> new EmployeeRoleDetails(employee, roleAndSalary)))
                 .collect(Collectors.toList());
     }
 
@@ -104,13 +106,15 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
         List<UUID> employeeIDs = employeeRoleAndSalaries.stream().map(employeeRoleAndSalary -> employeeRoleAndSalary.getEmployeeId()).collect(Collectors.toList());
         return employeeRepository.getEmployeeByEmployeeIdInAndDeletedIsFalse(employeeIDs)
                 .orElseThrow(()-> new NotFoundException("There are no employees with the roles mentioned"))
-                .stream().flatMap(employee -> employeeRoleAndSalaries.stream().map(roleAndSalary -> new EmployeeRoleDetails(employee, roleAndSalary)))
+                .stream().flatMap(employee -> employeeRoleAndSalaries.stream().filter(employeeRoleAndSalary ->
+                        employeeRoleAndSalary.getEmployeeId().toString().equals(employee.getEmployeeId().toString()))
+                        .map(roleAndSalary -> new EmployeeRoleDetails(employee, roleAndSalary)))
                 .collect(Collectors.toList());
     }
 
     @Override
     public void updateEndDate(UUID employeeID) {
-        Optional<EmployeeRoleAndSalary> employeeRoleAndSalary = employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNotNull(employeeID);
+        Optional<EmployeeRoleAndSalary> employeeRoleAndSalary = employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeID);
         if(employeeRoleAndSalary.isPresent()){
             employeeRoleAndSalary.get().setEndDate(ZonedDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE));
             employeeRoleAndSalaryRepository.save(employeeRoleAndSalary.get());

@@ -12,10 +12,10 @@ public interface EmployeeRoleAndSalaryRepository extends CrudRepository<Employee
 
     EmployeeRoleAndSalary save(EmployeeRoleAndSalary employeeHistory);
 
-    Optional<EmployeeRoleAndSalary> getAllByEmployeeIdAndEndDateIsNotNull(UUID employeeId);
+    Optional<EmployeeRoleAndSalary> getAllByEmployeeIdAndEndDateIsNull(UUID employeeId);
 
     List<EmployeeRoleAndSalary> findAllByEndDateIsNull();
 
-    List<EmployeeRoleAndSalary> getAllByRoleInAndEndDateIsNotNull(List<DesignationType> role);
+    List<EmployeeRoleAndSalary> getAllByRoleInAndEndDateIsNull(List<DesignationType> role);
 
 }

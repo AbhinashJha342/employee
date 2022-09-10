@@ -131,15 +131,22 @@ public class EmployeeAdminController {
     @GetMapping(params = {"roles"})
     public ResponseEntity<List<EmployeeByRole>> getEmployeeByRole(@RequestParam(name = "roles") List<DesignationType> roles){
         List<EmployeeByRole> employeeRolesList;
+        List<EmployeeRoleDetails> employeeRoleDetails;
         if(ObjectUtils.isEmpty(roles)){
+           employeeRoleDetails = roleAndSalaryService.findAllRoleAndSalary();
             employeeRolesList = Arrays.stream(DesignationType.values())
-                    .map(role-> new EmployeeByRole( role.getValue(), roleAndSalaryService.findAllRoleAndSalary().stream().count()))
+                    .map(role-> new EmployeeByRole( role.getValue(),
+                            employeeRoleDetails.stream()
+                                    .filter(employeeRoleDetail -> employeeRoleDetail.getRole().equals(role)).count()))
                     .collect(Collectors.toList());
         } else {
+            employeeRoleDetails = roleAndSalaryService.getAllEmployeesByRole(roles);
             employeeRolesList = roles.stream()
-                    .map(role -> new EmployeeByRole(role.getValue(), roleAndSalaryService.getAllEmployeesByRole(roles).stream().count()))
+                    .map(role -> new EmployeeByRole(role.getValue(),
+                            employeeRoleDetails.stream().filter(employeeRoleDetails1 -> employeeRoleDetails1.getRole().equals(role)).count()))
                     .collect(Collectors.toList());
         }
+
         return new ResponseEntity(employeeRolesList, HttpStatus.OK);
     }
 
