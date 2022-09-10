@@ -84,13 +84,13 @@ public class EmployeeAdminController {
                 new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping(params = {"designation"})
-    public ResponseEntity<List<EmployeeRoleDetails>> getEmployeeDetailsByDesignation(@RequestParam(name = "designation", required = false) String designation){
+    @GetMapping(value = {"/role", "/role/{role}"} )
+    public ResponseEntity<List<EmployeeRoleDetails>> getEmployeeDetailsByDesignation(@PathVariable(required = false) String role){
 
-        if(ObjectUtils.isEmpty(designation))
+        if(ObjectUtils.isEmpty(role))
             return new ResponseEntity(roleAndSalaryService.findAllRoleAndSalary(), HttpStatus.OK);
 
-        return new ResponseEntity(roleAndSalaryService.getAllEmployeesByRole(Arrays.asList(DesignationType.valueOf(designation))), HttpStatus.OK);
+        return new ResponseEntity(roleAndSalaryService.getAllEmployeesByRole(Arrays.asList(DesignationType.valueOf(role))), HttpStatus.OK);
     }
 
     @GetMapping(params = {"gender"})
