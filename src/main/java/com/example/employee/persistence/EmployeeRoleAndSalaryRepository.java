@@ -14,6 +14,8 @@ public interface EmployeeRoleAndSalaryRepository extends CrudRepository<Employee
 
     Optional<EmployeeRoleAndSalary> getAllByEmployeeIdAndEndDateIsNull(UUID employeeId);
 
+    List<EmployeeRoleAndSalary> getAllByEmployeeId(UUID employeeId);
+
     List<EmployeeRoleAndSalary> findAllByEndDateIsNull();
 
     List<EmployeeRoleAndSalary> getAllByRoleInAndEndDateIsNull(List<DesignationType> role);

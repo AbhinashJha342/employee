@@ -2,6 +2,7 @@ package com.example.employee.service.impl;
 
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.EmployeeRoleAndSalary;
+import com.example.employee.exception.DataAlreadyExistsException;
 import com.example.employee.exception.DbNotUpdatedException;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
@@ -60,14 +61,16 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
 
     @Override
     public void saveEmployeeRoleAndSalaryHistory(UUID employeeID, EmployeeRoleAndSalaryDTO employeeRoleAndSalaryDTO) {
-        Optional<Employee> employee = employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeID);
-        employee.orElseThrow(()-> new NotFoundException("No employee exists with employeeId "+employeeID));
+        employeeRepository.findEmployeesByEmployeeIdAndDeletedIsFalse(employeeID).orElseThrow(()-> new NotFoundException("No employee exists with employeeId "+employeeID));;
+        Optional<EmployeeRoleAndSalary> employeeRoleAndSalary = employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeID);
+        if(employeeRoleAndSalary.isPresent())
+            throw new DataAlreadyExistsException("there is already an existing role for this employee "+employeeID);
         employeeRoleAndSalaryRepository.save(EmployeeRoleAndSalaryDTO.to(employeeRoleAndSalaryDTO, employeeID));
     }
 
     @Override
-    public EmployeeRoleAndSalary getEmployeeRoleAndSalaryHistory(UUID employeeId) {
-        return employeeRoleAndSalaryRepository.getAllByEmployeeIdAndEndDateIsNull(employeeId).orElseThrow(()-> new NotFoundException("No role assigned to employee or employee with employeeId "+employeeId+" doesn't exist in the organization"));
+    public List<EmployeeRoleAndSalary> getEmployeeRoleAndSalaryHistory(UUID employeeId) {
+        return employeeRoleAndSalaryRepository.getAllByEmployeeId(employeeId);
     }
 
     @Override
@@ -77,10 +80,8 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
         roleAndSalaryHistory.orElseThrow(()-> new NotFoundException("No roles assigned to "+employeeId));
         EmployeeRoleAndSalary currentRoleAndSalary = roleAndSalaryHistory.get();
         if(employeeRoleAndSalaryPatchDTO.canBeUpdated(currentRoleAndSalary.getEndDate(), currentRoleAndSalary.getRole(), currentRoleAndSalary.getStartDate())){
-            currentRoleAndSalary.setSalary(employeeRoleAndSalaryPatchDTO.getSalary().get());
-            currentRoleAndSalary.setRole(employeeRoleAndSalaryPatchDTO.getRole());
-            currentRoleAndSalary.setEndDate(employeeRoleAndSalaryPatchDTO.getEndDate().get());
-            employeeRoleAndSalaryRepository.save(currentRoleAndSalary);
+            employeeRoleAndSalaryRepository.save(new EmployeeRoleAndSalary(employeeRoleAndSalaryPatchDTO.getRole(), employeeRoleAndSalaryPatchDTO.getSalary().get()
+            , currentRoleAndSalary.getEmployeeId(), employeeRoleAndSalaryPatchDTO.getStartingDate().get(), employeeRoleAndSalaryPatchDTO.getEndDate().get()));
             return employeeRoleAndSalaryPatchDTO;
         } else {
             throw new DbNotUpdatedException("The role and salary of the employee could not be updated");

@@ -91,7 +91,7 @@ public class EmployeeRoleAndSalary {
         this.endDate = endDate;
     }
 
-    public static EmployeeRoleAndSalaryResponseDTO to(EmployeeRoleAndSalary roleAndSalaryHistory, UUID employeeId) {
-        return new EmployeeRoleAndSalaryResponseDTO(employeeId, roleAndSalaryHistory.getRole() , roleAndSalaryHistory.getSalary(), roleAndSalaryHistory.getStartDate(), roleAndSalaryHistory.getEndDate());
+    public static EmployeeRoleAndSalaryResponseDTO to(EmployeeRoleAndSalary roleAndSalaryHistory) {
+        return new EmployeeRoleAndSalaryResponseDTO(roleAndSalaryHistory.getEmployeeId(), roleAndSalaryHistory.getRole() , roleAndSalaryHistory.getSalary(), roleAndSalaryHistory.getStartDate(), roleAndSalaryHistory.getEndDate());
     }
 }

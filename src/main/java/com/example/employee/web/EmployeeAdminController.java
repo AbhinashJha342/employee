@@ -171,8 +171,10 @@ public class EmployeeAdminController {
     }
 
     @GetMapping("/{id}/role-salary-history")
-    public ResponseEntity<EmployeeRoleAndSalaryResponseDTO> getEmployeeHistory(@PathVariable UUID id){
-       return new ResponseEntity(EmployeeRoleAndSalary.to(roleAndSalaryService.getEmployeeRoleAndSalaryHistory(id), id), HttpStatus.OK);
+    public ResponseEntity<List<EmployeeRoleAndSalaryResponseDTO>> getEmployeeHistory(@PathVariable UUID id){
+        return new ResponseEntity(roleAndSalaryService.getEmployeeRoleAndSalaryHistory(id).stream()
+                .map(EmployeeRoleAndSalary::to)
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
     private List<Employee> getEmployees(List<UUID> employeeIds){

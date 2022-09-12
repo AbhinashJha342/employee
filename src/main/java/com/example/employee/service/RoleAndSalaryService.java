@@ -15,7 +15,7 @@ public interface RoleAndSalaryService {
 
     void saveEmployeeRoleAndSalaryHistory(UUID employeeID, EmployeeRoleAndSalaryDTO employeeRoleAndSalaryDTO);
 
-    EmployeeRoleAndSalary getEmployeeRoleAndSalaryHistory(UUID employeeId);
+    List<EmployeeRoleAndSalary> getEmployeeRoleAndSalaryHistory(UUID employeeId);
 
     EmployeeRoleAndSalaryPatchDTO updateRoleAndSalary(UUID employeeId, EmployeeRoleAndSalaryPatchDTO employeeRoleAndSalaryPatchDTO);
 

@@ -29,6 +29,11 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(DataAlreadyExistsException.class)
+    public ResponseEntity handleDataExistException(DataAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(DbNotUpdatedException.class)
     public ResponseEntity handleDbNotUpdatedException(DbNotUpdatedException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
