@@ -67,10 +67,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         existingEmployee.getAddress().setEmployee(existingEmployee);
 
         Employee updatedEmployee = employeeRepository.save(existingEmployee);
-        //Change updatedData = new Change(updatedEmployee.getDesignation().toString(), updatedEmployee.getSalary());
-
-        //TODO make the equality check and then update the history db.
-        //historyService.saveEmployeeHistory(existingEmployee.getEmployeeId(), existingData, updatedData);
 
         return updatedEmployee;
     }

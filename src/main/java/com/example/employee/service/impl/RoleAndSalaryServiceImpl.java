@@ -75,8 +75,10 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
         roleAndSalaryHistory.orElseThrow(()-> new NotFoundException("No roles assigned to "+employeeId));
         EmployeeRoleAndSalary currentRoleAndSalary = roleAndSalaryHistory.get();
         if(employeeRoleAndSalaryPatchDTO.canBeUpdated(currentRoleAndSalary.getEndDate(), currentRoleAndSalary.getRole(), currentRoleAndSalary.getStartDate())){
-            employeeRoleAndSalaryRepository.save(new EmployeeRoleAndSalary(employeeRoleAndSalaryPatchDTO.getRole(), employeeRoleAndSalaryPatchDTO.getSalary().get()
-            , currentRoleAndSalary.getEmployeeId(), employeeRoleAndSalaryPatchDTO.getStartingDate().get(), employeeRoleAndSalaryPatchDTO.getEndDate().get()));
+            currentRoleAndSalary.setSalary(employeeRoleAndSalaryPatchDTO.getSalary().get());
+            currentRoleAndSalary.setRole(employeeRoleAndSalaryPatchDTO.getRole());
+            currentRoleAndSalary.setEndDate(employeeRoleAndSalaryPatchDTO.getEndDate().get());
+            employeeRoleAndSalaryRepository.save(currentRoleAndSalary);
             return employeeRoleAndSalaryPatchDTO;
         } else {
             throw new DbNotUpdatedException("The role and salary of the employee could not be updated");
