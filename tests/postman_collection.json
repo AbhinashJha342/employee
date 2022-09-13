@@ -448,11 +448,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -466,8 +462,9 @@
 						"header": [
 							{
 								"key": "",
-								"value": "TRAINEE",
-								"type": "text"
+								"value": "",
+								"type": "text",
+								"disabled": true
 							},
 							{
 								"key": "Authorization",
@@ -485,14 +482,19 @@
 							}
 						},
 						"url": {
-							"raw": "{{loadbalancer}}?designation=",
+							"raw": "{{loadbalancer}}/role/TRAINEE",
 							"host": [
 								"{{loadbalancer}}"
+							],
+							"path": [
+								"role",
+								"TRAINEE"
 							],
 							"query": [
 								{
 									"key": "designation",
-									"value": ""
+									"value": "",
+									"disabled": true
 								}
 							]
 						}
@@ -538,6 +540,44 @@
 					"response": []
 				},
 				{
+					"name": "Get employees by salary range",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}?range=5",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"query": [
+								{
+									"key": "range",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get employees by employee id",
 					"event": [
 						{
@@ -562,7 +602,7 @@
 						"header": [
 							{
 								"key": "Employee-id",
-								"value": "{{randomEmployeeWguId}}",
+								"value": "{{randomEmployeeWguId1}}",
 								"type": "text"
 							},
 							{
@@ -733,7 +773,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"10,000\",\n    \"startingDate\": \"2020-05-12\"\n}",
+							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"10000\",\n    \"startingDate\": \"2020-05-12\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -779,7 +819,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"TRAINEE\",\n    \"salary\": \"20,000\",\n    \"startingDate\": \"2020-05-18\"\n}",
+							"raw": "{\n    \"role\": \"TRAINEE\",\n    \"salary\": \"20000\",\n    \"startingDate\": \"2020-05-18\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -800,7 +840,99 @@
 					"response": []
 				},
 				{
-					"name": "get employee role and salary",
+					"name": "Update role and salary for another employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"20,000\",\n    \"startingDate\": \"2020-05-12\",\n    \"endDate\": \"2021-05-18\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/update-role-salary",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"path": [
+								"{{randomEmployeeWguId}}",
+								"update-role-salary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create new role and salary for employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"TRAINEE\",\n    \"salary\": \"10000\",\n    \"startingDate\": \"2020-05-12\"   \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/assign-role",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"path": [
+								"{{randomEmployeeWguId}}",
+								"assign-role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get employee role and salary update history",
 					"event": [
 						{
 							"listen": "test",
@@ -808,8 +940,8 @@
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -859,7 +991,7 @@
 								"exec": [
 									"var jsonData = pm.response.json();",
 									"",
-									"pm.test(\"Status code is 201\", function () {",
+									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});"
 								],
@@ -1021,7 +1153,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{loadbalancer}}?name.first=Te&name.last=Re",
+							"raw": "{{loadbalancer}}?name.first=Te&name.last=Wi",
 							"host": [
 								"{{loadbalancer}}"
 							],
@@ -1032,7 +1164,7 @@
 								},
 								{
 									"key": "name.last",
-									"value": "Re"
+									"value": "Wi"
 								}
 							]
 						}
