@@ -384,6 +384,379 @@
 					"response": []
 				},
 				{
+					"name": "Get employees by employee names",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Employee-ids",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}?name.first=Te&name.last=Wi",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"query": [
+								{
+									"key": "name.first",
+									"value": "Te"
+								},
+								{
+									"key": "name.last",
+									"value": "Wi"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get employees by state",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}?state=DF",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"query": [
+								{
+									"key": "state",
+									"value": "DF"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get employees by employee id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Employee-id",
+								"value": "{{randomEmployeeWguId1}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"query": [
+								{
+									"key": "state",
+									"value": "DF",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Employee-id",
+								"value": "{{randomEmployeeWguId}}",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"names\":\n        {\n            \"first\": \"Test1\",\n            \"last\": \"Test\"\n        },\n    \"address\": {\n        \"city\": \"TestCity-Upd\",\n        \"state\": \"DF\",\n        \"postalCode\": \"04230\",\n        \"addressLines\": \n            {\n                \"exterior\": 100,\n                \"street\": \"200 Test Rd\"\n            }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}",
+							"host": [
+								"{{loadbalancer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create role and salary for employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"10000\",\n    \"startingDate\": \"2020-05-12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/assign-role",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"path": [
+								"{{randomEmployeeWguId}}",
+								"assign-role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create role and salary for another employee",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"role\": \"TRAINEE\",\n    \"salary\": \"20000\",\n    \"startingDate\": \"2020-05-18\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}/{{randomEmployeeWguId1}}/assign-role",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"path": [
+								"{{randomEmployeeWguId1}}",
+								"assign-role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get employee role and salary update history",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/role-salary-history",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"path": [
+								"{{randomEmployeeWguId}}",
+								"role-salary-history"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get employees by salary range",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loadbalancer}}?range=3",
+							"host": [
+								"{{loadbalancer}}"
+							],
+							"query": [
+								{
+									"key": "range",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get employee count by designation",
 					"event": [
 						{
@@ -502,344 +875,6 @@
 					"response": []
 				},
 				{
-					"name": "Get employees by state",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}?state=DF",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "state",
-									"value": "DF"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get employees by salary range",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}?range=5",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "range",
-									"value": "5"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get employees by employee id",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Employee-id",
-								"value": "{{randomEmployeeWguId1}}",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "state",
-									"value": "DF",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update employee",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204\", function () {",
-									"    pm.response.to.have.status(204);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Employee-id",
-								"value": "{{randomEmployeeWguId}}",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"names\":\n        {\n            \"first\": \"Test1\",\n            \"last\": \"Test\"\n        },\n    \"address\": {\n        \"city\": \"TestCity-Upd\",\n        \"state\": \"DF\",\n        \"postalCode\": \"04230\",\n        \"addressLines\": \n            {\n                \"exterior\": 100,\n                \"street\": \"200 Test Rd\"\n            }\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}",
-							"host": [
-								"{{loadbalancer}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get employee history",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.expect(jsonData.employeeID).to.eql(pm.globals.get('randomEmployeeWguId'));"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Employee-id",
-								"value": "{{randomEmployeeWguId}}",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}/history",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"path": [
-								"history"
-							],
-							"query": [
-								{
-									"key": "state",
-									"value": "DF",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create role and salary for employee",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"10000\",\n    \"startingDate\": \"2020-05-12\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/assign-role",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"path": [
-								"{{randomEmployeeWguId}}",
-								"assign-role"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create role and salary for another employee",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"TRAINEE\",\n    \"salary\": \"20000\",\n    \"startingDate\": \"2020-05-18\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}/{{randomEmployeeWguId1}}/assign-role",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"path": [
-								"{{randomEmployeeWguId1}}",
-								"assign-role"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update role and salary for another employee",
 					"event": [
 						{
@@ -865,7 +900,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"20,000\",\n    \"startingDate\": \"2020-05-12\",\n    \"endDate\": \"2021-05-18\"\n}",
+							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"20000\",\n    \"startingDate\": \"2020-05-12\",\n    \"endDate\": \"2021-05-18\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -926,105 +961,6 @@
 							"path": [
 								"{{randomEmployeeWguId}}",
 								"assign-role"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get employee role and salary update history",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/role-salary-history",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"path": [
-								"{{randomEmployeeWguId}}",
-								"role-salary-history"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create role and salary for employee Copy",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"",
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"role\": \"MANAGER\",\n    \"salary\": \"10,000\",\n    \"startingDate\": \"2020-05-12\",\n    \"endDate\": \"2021-05-12\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}/{{randomEmployeeWguId}}/update-role-salary",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"path": [
-								"{{randomEmployeeWguId}}",
-								"update-role-salary"
 							]
 						}
 					},
@@ -1124,54 +1060,6 @@
 					"response": []
 				},
 				{
-					"name": "Get employees by employee names",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Employee-ids",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}?name.first=Te&name.last=Wi",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "name.first",
-									"value": "Te"
-								},
-								{
-									"key": "name.last",
-									"value": "Wi"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Update another employee",
 					"request": {
 						"method": "PATCH",
@@ -1190,108 +1078,6 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"names\":\n        {\n            \"first\": \"Test1\",\n            \"last\": \"Test\"\n        },\n    \"gender\": \"female\",    \n    \"address\": {\n        \"city\": \"TestCity-Upd\",\n        \"state\": \"DF\",\n        \"postalCode\": \"04230\",\n        \"addressLines\": \n            {\n                \"exterior\": 100,\n                \"street\": \"200 Test Rd\"\n            }\n    },\n    \"email\": [\n        {\n            \"address\": \"employeepostman@test.test\",\n            \"type\": \"CORPORATE\"\n        }\n    ],\n    \"dateOfBirth\": \"2010-02-02\",\n    \"phone\": \"(208)-867-5309\",\n    \"designation\": \"Trainee\",\n    \"salary\":\"10,000\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}",
-							"host": [
-								"{{loadbalancer}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get employees by employee ids",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Employee-ids",
-								"value": "{{randomEmployeeWguId}}, {{randomEmployeeWguId1}}",
-								"type": "text"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "state",
-									"value": "DF",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create employee with both personal and corporate email",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"names\":\n        {\n            \"first\": \"Test\",\n            \"last\": \"Test\"\n        },\n    \"gender\": \"female\",    \n    \"address\": {\n        \"city\": \"TestCity\",\n        \"state\": \"DF\",\n        \"postalCode\": \"04230\",\n        \"addressLines\": \n            {\n                \"exterior\": 100,\n                \"street\": \"200 Test Rd\"\n            }\n    },\n    \"dateOfBirth\": \"2010-02-02\",\n    \"email\": [\n        {\n            \"address\": \"testcorporate@test.test\",\n            \"type\": \"CORPORATE\"\n        },\n        {\n            \"address\": \"testpersonal@test.test\",\n            \"type\": \"PERSONAL\"\n        }\n    ],\n    \"phone\": \"(208)-867-5309\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}",
-							"host": [
-								"{{loadbalancer}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Create new employee with null address",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{authToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"names\":\n        {\n            \"first\": \"Test\",\n            \"last\": \"Test\"\n        },\n    \"gender\": \"female\",\n    \"dateOfBirth\": \"2010-02-02\",\n    \"email\": [\n        {\n            \"address\": \"personprofilepostmantest@test.test\",\n            \"type\": \"PERSONAL\"\n        }\n    ],\n    \"phone\": \"(208)-867-5309\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1355,41 +1141,6 @@
 									"key": "state",
 									"value": "DF",
 									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete an existing employee",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Employee-id",
-								"value": "8f8cc714-1fef-11ed-861d-0242ac120002",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{loadbalancer}}?Authorization=Bearer {{authToken}}",
-							"host": [
-								"{{loadbalancer}}"
-							],
-							"query": [
-								{
-									"key": "Authorization",
-									"value": "Bearer {{authToken}}"
 								}
 							]
 						}
