@@ -2,16 +2,14 @@ package com.example.employee.service.impl;
 
 import com.example.employee.domain.Employee;
 import com.example.employee.domain.EmployeeRoleAndSalary;
+import com.example.employee.domain.EmployeeSalaryAndDifferenceView;
 import com.example.employee.exception.DataAlreadyExistsException;
 import com.example.employee.exception.DbNotUpdatedException;
 import com.example.employee.exception.NotFoundException;
 import com.example.employee.persistence.EmployeeRepository;
 import com.example.employee.persistence.EmployeeRoleAndSalaryRepository;
 import com.example.employee.service.RoleAndSalaryService;
-import com.example.employee.web.schema.DesignationType;
-import com.example.employee.web.schema.EmployeeRoleAndSalaryDTO;
-import com.example.employee.web.schema.EmployeeRoleAndSalaryPatchDTO;
-import com.example.employee.web.schema.EmployeeRoleDetails;
+import com.example.employee.web.schema.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,8 +117,29 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
     }
 
     @Override
-    public int getSalaryDiff(int range) {
-        int salaryDiff = employeeRoleAndSalaryRepository.getEmployeeSalaryDifference();
-        return 0;
+    public List<EmployeeSalaryCount> getSalaryDiff(int set) {
+        Optional.of(employeeRoleAndSalaryRepository.findAllByEndDateIsNull()).orElseThrow(()-> new NotFoundException("no employee have role and salary assigned."));
+        EmployeeSalaryAndDifferenceView employeeRoleView = employeeRoleAndSalaryRepository.getEmployeeMinMaxSalaryAndDiff();
+        int range = employeeRoleView.getSalaryDiff()/set;
+        int min = employeeRoleView.getMinSalary();
+        int max = employeeRoleView.getMaxSalary();
+        int tempMax = min+range;
+        List<EmployeeSalaryCount> salaryCounts = new ArrayList<>();
+
+        for(int i = 1; i<=set; i++){
+            if(i==1){
+                List<EmployeeRoleAndSalary> employeeRoleAndSalaries = employeeRoleAndSalaryRepository.getEmployeesInSalaryRange(min, tempMax);
+                salaryCounts.add(new EmployeeSalaryCount(employeeRoleAndSalaries.size(), min+"-"+tempMax));
+            } else if (i == set){
+                List<EmployeeRoleAndSalary> employeeRoleAndSalaries = employeeRoleAndSalaryRepository.getEmployeesInSalaryRange(tempMax, max);
+                salaryCounts.add(new EmployeeSalaryCount(employeeRoleAndSalaries.size(), tempMax+"-"+max));
+            } else{
+                List<EmployeeRoleAndSalary> employeeRoleAndSalaries = employeeRoleAndSalaryRepository.getEmployeesInSalaryRange(tempMax, min+(range*i));
+                salaryCounts.add(new EmployeeSalaryCount(employeeRoleAndSalaries.size(), tempMax+"-"+(min+(range*i))));
+                tempMax = min+(range*i);
+            }
+            tempMax+=1;
+        }
+        return salaryCounts;
     }
 }

@@ -111,8 +111,7 @@ public class EmployeeAdminController {
 
     @GetMapping(params = {"range"})
     public ResponseEntity<List<EmployeeGender>> getEmployeeSalaryCount(@RequestParam(name = "range", required = false, defaultValue = "5") String range){
-        roleAndSalaryService.getSalaryDiff(Integer.parseInt(range));
-        return null;
+        return new ResponseEntity(roleAndSalaryService.getSalaryDiff(Integer.parseInt(range)), HttpStatus.OK);
     }
 
     @GetMapping(params = {"birthDate"})

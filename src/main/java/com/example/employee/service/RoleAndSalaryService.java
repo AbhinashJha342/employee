@@ -1,10 +1,7 @@
 package com.example.employee.service;
 
 import com.example.employee.domain.EmployeeRoleAndSalary;
-import com.example.employee.web.schema.DesignationType;
-import com.example.employee.web.schema.EmployeeRoleAndSalaryDTO;
-import com.example.employee.web.schema.EmployeeRoleAndSalaryPatchDTO;
-import com.example.employee.web.schema.EmployeeRoleDetails;
+import com.example.employee.web.schema.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,5 +22,5 @@ public interface RoleAndSalaryService {
 
     void updateEndDate(UUID employeeID);
 
-    int getSalaryDiff(int range);
+    List<EmployeeSalaryCount> getSalaryDiff(int range);
 }
