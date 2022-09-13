@@ -21,32 +21,44 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request){
-        return new ResponseEntity<>("email id already exists. please select a unique address.", HttpStatus.BAD_REQUEST);
+        ErrorData error = new ErrorData(HttpStatus.BAD_REQUEST);
+        error.setMessage("email id already exists. please select a unique address.");
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity handleNotFoundException(NotFoundException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {
+        ErrorData error = new ErrorData(HttpStatus.NOT_FOUND);
+        error.setMessage(ex.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(DataAlreadyExistsException.class)
     public ResponseEntity handleDataExistException(DataAlreadyExistsException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        ErrorData error = new ErrorData(HttpStatus.NOT_FOUND);
+        error.setMessage(ex.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(DbNotUpdatedException.class)
     public ResponseEntity handleDbNotUpdatedException(DbNotUpdatedException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.OK);
+        ErrorData error = new ErrorData(HttpStatus.OK);
+        error.setMessage(ex.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     @ExceptionHandler(value = {ConstraintViolationException.class, ValidationException.class})
     public ResponseEntity handleConflict(ValidationException ex, WebRequest request) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        ErrorData error = new ErrorData(HttpStatus.BAD_REQUEST);
+        error.setMessage(ex.getMessage());
+        return new ResponseEntity<>(error, error.getStatus());
     }
 
     //handles exception from @RequestBody
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        return new ResponseEntity<>(Map.of("errors", ex.getAllErrors().stream().map(ObjectError::toString).collect(Collectors.toList())), HttpStatus.BAD_REQUEST);
+        ErrorData error = new ErrorData(HttpStatus.BAD_REQUEST);
+        error.setMessage(Map.of("errors", ex.getAllErrors().stream().map(ObjectError::toString).collect(Collectors.toList())).toString());
+        return new ResponseEntity<>(error, error.getStatus());
     }
 }
