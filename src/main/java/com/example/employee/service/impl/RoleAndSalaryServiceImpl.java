@@ -120,4 +120,10 @@ public class RoleAndSalaryServiceImpl implements RoleAndSalaryService {
             employeeRoleAndSalaryRepository.save(employeeRoleAndSalary.get());
         }
     }
+
+    @Override
+    public int getSalaryDiff(int range) {
+        int salaryDiff = employeeRoleAndSalaryRepository.getEmployeeSalaryDifference();
+        return 0;
+    }
 }

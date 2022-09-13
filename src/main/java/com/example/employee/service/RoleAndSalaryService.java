@@ -24,4 +24,6 @@ public interface RoleAndSalaryService {
     List<EmployeeRoleDetails> findAllRoleAndSalary();
 
     void updateEndDate(UUID employeeID);
+
+    int getSalaryDiff(int range);
 }

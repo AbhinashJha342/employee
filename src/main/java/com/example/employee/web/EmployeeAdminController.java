@@ -109,13 +109,10 @@ public class EmployeeAdminController {
         return new ResponseEntity(employeeGenderList, HttpStatus.OK);
     }
 
-    //@GetMapping(params = {"range"})
-    public ResponseEntity<List<EmployeeGender>> getEmployeeSalaryCount(@RequestParam(name = "range", required = false) List<String> range){
-        List<Employee> employees = employeeService.findAll();
-        EmployeeGender male = new EmployeeGender("Male", employees.stream().filter(employee -> employee.getGender().equals("Male")).count());
-        EmployeeGender female = new EmployeeGender("Female", employees.stream().filter(employee -> employee.getGender().equals("Female")).count());
-        List<EmployeeGender> employeeGenderList = Arrays.asList(male, female);
-        return new ResponseEntity(employeeGenderList, HttpStatus.OK);
+    @GetMapping(params = {"range"})
+    public ResponseEntity<List<EmployeeGender>> getEmployeeSalaryCount(@RequestParam(name = "range", required = false, defaultValue = "5") String range){
+        roleAndSalaryService.getSalaryDiff(Integer.parseInt(range));
+        return null;
     }
 
     @GetMapping(params = {"birthDate"})

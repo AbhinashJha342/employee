@@ -2,6 +2,7 @@ package com.example.employee.persistence;
 
 import com.example.employee.domain.EmployeeRoleAndSalary;
 import com.example.employee.web.schema.DesignationType;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -19,5 +20,8 @@ public interface EmployeeRoleAndSalaryRepository extends CrudRepository<Employee
     List<EmployeeRoleAndSalary> findAllByEndDateIsNull();
 
     List<EmployeeRoleAndSalary> getAllByRoleInAndEndDateIsNull(List<DesignationType> role);
+
+    @Query(value = "SELECT max(cast(salary as INTEGER)) - min(cast(salary as INTEGER)) as salaryDiff FROM employee_role_and_salary", nativeQuery = true)
+    int getEmployeeSalaryDifference();
 
 }
