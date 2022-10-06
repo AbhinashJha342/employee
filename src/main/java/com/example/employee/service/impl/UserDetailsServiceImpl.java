@@ -14,7 +14,6 @@ import java.util.Optional;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
     private final UserService userService;
 
     public UserDetailsServiceImpl(UserService userService) {

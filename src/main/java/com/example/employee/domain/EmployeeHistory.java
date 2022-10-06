@@ -10,11 +10,11 @@ import javax.persistence.Id;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@Entity
+//@Entity
 public class EmployeeHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    /*@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)*/
     private Long id;
 
     @JsonProperty("old")
