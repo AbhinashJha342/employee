@@ -1,0 +1,31 @@
+version: '1'
+
+services:
+  app:
+    image: 'employee-profile:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - postgres
+
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/employee-profile
+      - SPRING_DATASOURCE_USERNAME=newuser
+      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  postgres:
+    image: postgres:latest
+    container_name: employee-profile-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: newuser
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: default_database
+    restart: always
+
+volumes:
+  postgres:
+    driver: local
