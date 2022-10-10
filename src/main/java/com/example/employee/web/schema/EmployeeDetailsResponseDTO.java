@@ -5,19 +5,19 @@ import java.util.UUID;
 
 public class EmployeeDetailsResponseDTO {
 
-    private final UUID employeeId;
+    private UUID employeeId;
 
-    private final NameDTO names;
+    private NameDTO names;
 
-    private final String gender;
+    private String gender;
 
-    private final List<EmailDTO> email;
+    private List<EmailDTO> email;
 
-    private final AddressDTO address;
+    private AddressDTO address;
 
-    private final String phone;
+    private String phone;
 
-    private final String dateOfBirth;
+    private String dateOfBirth;
 
 
     public EmployeeDetailsResponseDTO(UUID employeeId, NameDTO names, String gender, List<EmailDTO> email, AddressDTO address, String phone, String dateOfBirth) {
@@ -28,6 +28,9 @@ public class EmployeeDetailsResponseDTO {
         this.address = address;
         this.phone = phone;
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public EmployeeDetailsResponseDTO() {
     }
 
     public UUID getEmployeeId() {

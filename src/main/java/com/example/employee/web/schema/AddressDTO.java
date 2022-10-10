@@ -5,19 +5,22 @@ import com.example.employee.domain.AddressLines;
 
 public class AddressDTO {
 
-    private final String city;
+    private String city;
 
-    private final State state;
+    private State state;
 
-    private final String postalCode;
+    private String postalCode;
 
-    private final AddressLinesDTO addressLines;
+    private AddressLinesDTO addressLines;
 
     private AddressDTO(String city, State state, String postalCode, AddressLinesDTO addressLines) {
         this.city = city;
         this.state = state;
         this.postalCode = postalCode;
         this.addressLines = addressLines;
+    }
+
+    public AddressDTO() {
     }
 
     public String getCity() {

@@ -4,16 +4,19 @@ import com.example.employee.domain.AddressLines;
 
 public class AddressLinesDTO {
 
-    private final String exterior;
+    private String exterior;
 
-    private final String interior;
+    private String interior;
 
-    private final String street;
+    private String street;
 
     private AddressLinesDTO(String exterior, String interior, String street) {
         this.exterior = exterior;
         this.interior = interior;
         this.street = street;
+    }
+
+    public AddressLinesDTO() {
     }
 
     public String getExterior() {

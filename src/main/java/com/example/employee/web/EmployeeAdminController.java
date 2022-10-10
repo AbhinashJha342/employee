@@ -1,10 +1,11 @@
 package com.example.employee.web;
 
-import com.example.employee.domain.*;
+import com.example.employee.domain.Employee;
+import com.example.employee.domain.EmployeeRoleAndSalary;
+import com.example.employee.domain.NameFilter;
 import com.example.employee.service.EmployeeService;
 import com.example.employee.service.RoleAndSalaryService;
 import com.example.employee.web.schema.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -22,11 +23,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/employees")
 public class EmployeeAdminController {
 
-    @Autowired
-    private EmployeeService employeeService;
+    private final EmployeeService employeeService;
 
-    @Autowired
-    private RoleAndSalaryService roleAndSalaryService;
+    private final RoleAndSalaryService roleAndSalaryService;
+
+    public EmployeeAdminController(EmployeeService employeeService, RoleAndSalaryService roleAndSalaryService) {
+        this.employeeService = employeeService;
+        this.roleAndSalaryService = roleAndSalaryService;
+    }
 
     @DeleteMapping(headers = "Employee-id")
     public ResponseEntity archieve(@RequestHeader("Employee-id") UUID employeeId){
@@ -49,7 +53,7 @@ public class EmployeeAdminController {
     }
 
     @GetMapping(headers = "Employee-id")
-    public ResponseEntity<List<EmployeeDetailsResponseDTO>> getEmployeeDetails(@RequestHeader(value = "Employee-id", defaultValue = "")UUID employeeId){
+    public ResponseEntity<EmployeeDetailsResponseDTO> getEmployeeDetails(@RequestHeader(value = "Employee-id", defaultValue = "")UUID employeeId){
         return new ResponseEntity(Employee.from(employeeService.getEmployee(employeeId)), HttpStatus.OK);
     }
 

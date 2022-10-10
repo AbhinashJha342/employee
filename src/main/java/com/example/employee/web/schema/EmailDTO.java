@@ -4,13 +4,16 @@ import com.example.employee.domain.Email;
 
 public class EmailDTO {
 
-    private final String address;
+    private String address;
 
-    private final EmailType type;
+    private EmailType type;
 
     public EmailDTO(String address, EmailType type) {
         this.address = address;
         this.type = type;
+    }
+
+    public EmailDTO() {
     }
 
     public String getAddress() {
