@@ -38,4 +38,17 @@ public class EmployeeProfileUtil {
         return new NameDTO("first", "last");
     }
 
+    public static EmployeeDetailsRequestDTO createAnotherEmployeeRequest(){
+        return EmployeeDetailsRequestDTO.builder().setEmployeeId(UUID.randomUUID()).setDateOfBirth("02-02-2022")
+                .setAddress(employeeAddressDto())
+                .setGender("female")
+                .setPhoneNumber("5561124477")
+                .setEmailDTO(List.of(anotherEmployeeEmailDto()))
+                .setNames(employeeNameDto()).build();
+    }
+
+    public static EmailDTO anotherEmployeeEmailDto(){
+        return EmailDTO.builder().setEmailAddress("test1@test.com").setEmailType(EmailType.CORPORATE).build();
+    }
+
 }

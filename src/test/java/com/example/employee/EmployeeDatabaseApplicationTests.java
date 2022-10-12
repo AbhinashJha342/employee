@@ -2,6 +2,7 @@ package com.example.employee;
 
 import com.example.employee.util.EmployeeProfileUtil;
 import com.example.employee.web.AbstractControllerIntegrationTest;
+import com.example.employee.web.schema.EmployeeDetailsResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,18 +43,20 @@ class EmployeeDatabaseApplicationTests extends AbstractControllerIntegrationTest
     }
 
     @Test
-    void getEmployeeByEmployeeId() throws Exception {
+    void getEmployeeByEmployeeIdByCreating() throws Exception {
+        String newEmployee =  this.mockMvc.perform(post("/admin/employees")
+                        .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .content(new ObjectMapper().writeValueAsString(EmployeeProfileUtil.createAnotherEmployeeRequest())))
+                .andReturn().getResponse().getContentAsString();
+
+        EmployeeDetailsResponseDTO responseDTO = new ObjectMapper().readValue(newEmployee, EmployeeDetailsResponseDTO.class);
 
         this.mockMvc.perform(get("/admin/employees")
-                .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
-                .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
-                .header("Employee-id", "cc95ccff-8169-4559-9806-1ca4a1db3a19"))
-                .andExpect(status().is2xxSuccessful());
-                /*.andReturn()
-                .getResponse().getContentAsString();*/
-
-        //assertNotNull(employees);
-
+                        .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .header("Employee-id", responseDTO.getEmployeeId()))
+                        .andExpect(status().is2xxSuccessful());
     }
 
 }
