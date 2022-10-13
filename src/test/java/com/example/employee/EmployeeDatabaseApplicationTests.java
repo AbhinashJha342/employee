@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.List;
+import java.util.UUID;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,7 +35,7 @@ class EmployeeDatabaseApplicationTests extends AbstractControllerIntegrationTest
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 
-    @Test
+    /*@Test
     void createEmployeeTest() throws Exception {
         this.mockMvc.perform(post("/admin/employees")
                         .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
@@ -56,6 +59,15 @@ class EmployeeDatabaseApplicationTests extends AbstractControllerIntegrationTest
                         .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
                         .header("Employee-id", responseDTO.getEmployeeId()))
                         .andExpect(status().is2xxSuccessful());
-    }
+    }*/
 
+    @Test
+    void getEmployeeByEmployeeId() throws Exception {
+        List<UUID> employeeIds = List.of();
+        this.mockMvc.perform(get("/admin/employees")
+                        .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
+                        .header("Employee-ids", ""))
+                .andExpect(status().is2xxSuccessful());
+    }
 }

@@ -79,7 +79,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public List<Employee> findAll() {
-        return employeeRepository.findAllByDeletedIsFalse().orElseThrow(() -> new NotFoundException("No employee found."));
+        List<Employee> result = employeeRepository.findAllByDeletedIsFalse();
+        if(result.size() == 0)
+            throw new NotFoundException("No employee found.");
+
+        return result;
     }
 
     @Override

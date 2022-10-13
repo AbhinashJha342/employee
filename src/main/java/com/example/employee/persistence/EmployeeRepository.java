@@ -21,7 +21,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
 
     Optional<List<Employee>> getEmployeeByEmployeeIdInAndDeletedIsFalse(List<UUID> employeeIds);
 
-    Optional<List<Employee>> findAllByDeletedIsFalse();
+    List<Employee> findAllByDeletedIsFalse();
 
     Optional<Employee> findEmployeesByEmployeeIdAndDeletedIsFalse(UUID employeeId);
 
