@@ -35,7 +35,7 @@ class EmployeeDatabaseApplicationTests extends AbstractControllerIntegrationTest
         this.mockMvc = webAppContextSetup(this.wac).build();
     }
 
-    /*@Test
+    @Test
     void createEmployeeTest() throws Exception {
         this.mockMvc.perform(post("/admin/employees")
                         .accept(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
@@ -59,7 +59,7 @@ class EmployeeDatabaseApplicationTests extends AbstractControllerIntegrationTest
                         .contentType(EmployeeProfileUtil.MEDIA_TYPE_JSON_UTF8)
                         .header("Employee-id", responseDTO.getEmployeeId()))
                         .andExpect(status().is2xxSuccessful());
-    }*/
+    }
 
     @Test
     void getEmployeeByEmployeeId() throws Exception {

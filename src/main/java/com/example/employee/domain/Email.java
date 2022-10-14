@@ -18,7 +18,7 @@ import javax.persistence.ManyToOne;
 public class Email {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
